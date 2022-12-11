@@ -1,0 +1,36 @@
+FROM node:16-alpine AS installer
+
+WORKDIR /app
+
+COPY ../package.*json .
+
+RUN npm install
+
+
+FROM node:16-alpine AS builder
+
+WORKDIR /app
+
+COPY --from=installer /app/node_modules ./node_modules
+COPY .. .
+
+RUN npx prisma generate
+RUN npm run build
+
+
+FROM node:16-alpine AS runner
+
+WORKDIR /app
+
+ENV PORT=${PORT}
+ENV GRPC_URL=${GRPC_URL}
+
+ENV RABBITMQ_URL=${RABBITMQ_URL}
+ENV DATABASE_URL=${DATABASE_URL}
+ENV MONGO_URI=${MONGO_URI}
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder app/package.json .
+
+CMD ["npm", "run", "start:prod"]

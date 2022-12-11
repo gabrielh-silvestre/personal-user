@@ -1,8 +1,9 @@
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 import type { OutputGetUserDto } from './GetUserByEmail.dto';
+
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 import { USER_REPOSITORY } from '@users/utils/constants';
 

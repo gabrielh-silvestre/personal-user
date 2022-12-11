@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common/decorators';
 // import { ConfigModule } from '@nestjs/config';
 
-import { AuthModule } from '@auth/auth.module';
+// import { AuthModule } from '@auth/auth.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
 import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserPrisma.adapter';
@@ -30,7 +30,7 @@ import {
 } from './utils/constants';
 
 @Module({
-  imports: [RmqModule.register('MAIL'), AuthModule],
+  imports: [RmqModule.register('MAIL')],
   exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
   controllers: [CreateUserController, GetMeController],
   providers: [

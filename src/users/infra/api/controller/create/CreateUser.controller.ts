@@ -14,8 +14,8 @@ import type {
 
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
-import { ParseHalJsonInterceptor } from '../../interceptor/Parse.hal-json.interceptor';
-import { ExceptionFilterRpc } from '../../filter/ExceptionFilter.grpc';
+import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
 @Controller('/users')
 export class CreateUserController {

@@ -2,14 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
+import { AppModule } from './app.module';
+
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 
-import { AppModule } from './app.module';
+import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
 
 async function bootstrap() {
   const GRPC_URL = process.env.GRPC_URL || 'localhost:50051';
 
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new GlobalExceptionRestFilter());
 
   const userRmqService = app.get<RmqService>(RmqService);
 

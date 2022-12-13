@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
+import { RmqService } from '@shared/modules/rmq/rmq.service';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,6 +11,11 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  const userRmqService = app.get<RmqService>(RmqService);
+
+  app.connectMicroservice<MicroserviceOptions>(
+    userRmqService.getOptions('USER'),
+  );
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {

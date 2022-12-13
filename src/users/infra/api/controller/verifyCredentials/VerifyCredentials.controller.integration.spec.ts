@@ -6,6 +6,8 @@ import { VerifyCredentialsUseCase } from '@users/useCase/verifyCredentials/Verif
 import { UserRepository } from '@users/infra/repository/User.repository';
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 
+import { RmqService } from '@shared/modules/rmq/rmq.service';
+
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import { USER_DATABASE_ADAPTER, USER_REPOSITORY } from '@users/utils/constants';
 
@@ -29,6 +31,13 @@ describe('Integration tests for Verify Credentials controller', () => {
           provide: USER_DATABASE_ADAPTER,
           useClass: UserDatabaseMemoryAdapter,
         },
+        {
+          provide: RmqService,
+          useValue: {
+            ack: jest.fn(),
+            nack: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -38,11 +47,14 @@ describe('Integration tests for Verify Credentials controller', () => {
   });
 
   describe('should verify credentials', () => {
-    it('with gRPC request', async () => {
-      const response = await verifyCredentialsController.handleGrpc({
-        email,
-        password: 'password',
-      });
+    it('with RMQ message', async () => {
+      const response = await verifyCredentialsController.handleRmq(
+        {
+          email,
+          password: 'password',
+        },
+        {} as any,
+      );
 
       expect(response).toStrictEqual({ id: expect.any(String) });
     });

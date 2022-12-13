@@ -1,7 +1,6 @@
 import { Controller, UseFilters } from '@nestjs/common';
 import {
   Ctx,
-  GrpcMethod,
   MessagePattern,
   Payload,
   RmqContext,
@@ -24,14 +23,6 @@ export class VerifyCredentialsController {
     private readonly verifyCredentialsUseCase: VerifyCredentialsUseCase,
     private readonly rmqService: RmqService,
   ) {}
-
-  @UseFilters(new ExceptionFilterRpc())
-  @GrpcMethod('UserService', 'VerifyCredentials')
-  async handleGrpc(
-    data: InputVerifyCredentialsDto,
-  ): Promise<OutputVerifyCredentialsDto | never> {
-    return this.verifyCredentialsUseCase.execute(data);
-  }
 
   @UseFilters(new ExceptionFilterRpc())
   @MessagePattern('verify_user_credentials')

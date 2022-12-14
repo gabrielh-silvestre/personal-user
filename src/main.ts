@@ -9,6 +9,7 @@ import { RmqService } from '@shared/modules/rmq/rmq.service';
 import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
 
 async function bootstrap() {
+  const PORT = process.env.PORT || 3000;
   const GRPC_URL = process.env.GRPC_URL || 'localhost:50051';
 
   const app = await NestFactory.create(AppModule);
@@ -28,7 +29,7 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(3000);
+  await app.listen(PORT);
   await app.startAllMicroservices();
 }
 bootstrap();

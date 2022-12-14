@@ -18,7 +18,7 @@ import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
 
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
-import { AuthServiceAdapter } from './infra/adapter/auth/service/AuthService.adapter';
+import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
@@ -34,7 +34,7 @@ import {
 } from './utils/constants';
 
 @Module({
-  imports: [RmqModule.register('MAIL')],
+  imports: [RmqModule.register('MAIL'), RmqModule.register('AUTH')],
   exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
   controllers: [
     CreateUserController,
@@ -56,7 +56,7 @@ import {
     },
     {
       provide: AUTH_ADAPTER,
-      useClass: AuthServiceAdapter,
+      useClass: AuthRmqAdapter,
     },
     {
       provide: AUTH_GATEWAY,

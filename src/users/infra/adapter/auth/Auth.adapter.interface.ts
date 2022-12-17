@@ -1,9 +1,15 @@
 import { Observable } from 'rxjs';
 
-export type AuthResponse = {
+export type OutputVerifyToken = {
   userId: string;
 };
 
+export type InputGenerateToken = {
+  userId: string;
+  type: 'recover';
+};
+
 export interface IAuthAdapter {
-  verify(token: string): Observable<AuthResponse | null>;
+  verify(token: string): Observable<OutputVerifyToken | null>;
+  generate(data: InputGenerateToken): Observable<string | never>;
 }

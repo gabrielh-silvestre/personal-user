@@ -16,6 +16,15 @@ export class ChangePasswordUseCase {
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
   ) {}
 
+  private passwordMatch(
+    newPassword: string,
+    confirmPassword: string,
+  ): void | never {
+    if (newPassword !== confirmPassword) {
+      throw ExceptionFactory.invalidArgument('Passwords do not match');
+    }
+  }
+
   private async findUser(id: string): Promise<User | never> {
     const foundUser = await this.userRepository.find(id);
 
@@ -29,7 +38,10 @@ export class ChangePasswordUseCase {
   async execute({
     id,
     newPassword,
+    confirmPassword,
   }: InputChangePasswordDto): Promise<void | never> {
+    this.passwordMatch(newPassword, confirmPassword);
+
     const user = await this.findUser(id);
 
     user.changePassword(PasswordFactory.createNew(newPassword));

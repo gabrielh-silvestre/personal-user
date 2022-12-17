@@ -8,13 +8,17 @@ import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserP
 import { UserRepository } from './infra/repository/User.repository';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
-import { GetMeController } from './infra/api/controller/getMe/GetMe.controller';
-
 import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
+
+import { VerifyCredentialsController } from './infra/api/controller/verifyCredentials/VerifyCredentials.controller';
+import { VerifyCredentialsUseCase } from './useCase/verifyCredentials/VerifyCredentials.useCase';
+
+import { GetMeController } from './infra/api/controller/getMe/GetMe.controller';
 import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
+
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
-import { AuthServiceAdapter } from './infra/adapter/auth/service/AuthService.adapter';
+import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
@@ -30,13 +34,18 @@ import {
 } from './utils/constants';
 
 @Module({
-  imports: [RmqModule.register('MAIL')],
+  imports: [RmqModule.register('MAIL'), RmqModule.register('AUTH')],
   exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
-  controllers: [CreateUserController, GetMeController],
+  controllers: [
+    CreateUserController,
+    GetMeController,
+    VerifyCredentialsController,
+  ],
   providers: [
     CreateUserUseCase,
     GetUserByIdUseCase,
     GetUserByEmailUseCase,
+    VerifyCredentialsUseCase,
     {
       provide: MAIL_GATEWAY,
       useClass: MailGateway,
@@ -47,7 +56,7 @@ import {
     },
     {
       provide: AUTH_ADAPTER,
-      useClass: AuthServiceAdapter,
+      useClass: AuthRmqAdapter,
     },
     {
       provide: AUTH_GATEWAY,

@@ -70,7 +70,6 @@ export class AuthGuard implements CanActivate {
 
     try {
       const response = await this.authGateway.verify(token);
-      if (!response) throw ExceptionFactory.forbidden('Invalid token');
 
       this.saveUserId(context, response.userId);
 

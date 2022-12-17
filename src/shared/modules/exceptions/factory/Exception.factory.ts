@@ -53,4 +53,12 @@ export class ExceptionFactory {
       HttpStatus.NOT_ACCEPTABLE,
     );
   }
+
+  static unprocessableEntity(message: string): IException {
+    return new Exception(
+      message,
+      status.FAILED_PRECONDITION,
+      HttpStatus.UNPROCESSABLE_ENTITY,
+    );
+  }
 }

@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 
-import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
+import { GlobalExceptionRestFilter } from '@shared/infra/filter/GlobalException.filter';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 3000;

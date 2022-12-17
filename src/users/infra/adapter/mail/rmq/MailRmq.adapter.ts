@@ -10,6 +10,11 @@ export class MailRmqAdapter implements IMailAdapter {
   constructor(@Inject(MAIL_QUEUE) private readonly client: ClientProxy) {}
 
   async send(to: string, subject: string, body: InputBody): Promise<void> {
-    this.client.emit('send', { to, subject, body });
+    this.client.emit('mail.send', {
+      to,
+      subject,
+      text: body.text,
+      html: body.html,
+    });
   }
 }

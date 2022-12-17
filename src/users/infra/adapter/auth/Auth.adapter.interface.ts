@@ -10,6 +10,6 @@ export type InputGenerateToken = {
 };
 
 export interface IAuthAdapter {
-  verify(token: string): Observable<OutputVerifyToken | null>;
+  verify(token: string): Observable<OutputVerifyToken | never>;
   generate(data: InputGenerateToken): Observable<string | never>;
 }

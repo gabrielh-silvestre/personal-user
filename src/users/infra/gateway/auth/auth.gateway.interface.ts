@@ -1,7 +1,8 @@
-export type AuthGatewayOutput = {
+export type OutputVerifyAuth = {
   userId: string;
 };
 
 export interface IAuthGateway {
-  verify(token: string): Promise<AuthGatewayOutput | null>;
+  verify(token: string): Promise<OutputVerifyAuth | null>;
+  generateRecoverPasswordToken(userId: string): Promise<string | never>;
 }

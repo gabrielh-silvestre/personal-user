@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+import { from, throwError } from 'rxjs';
 
 import type { IAuthAdapter } from '@users/infra/adapter/auth/Auth.adapter.interface';
 import type { IAuthGateway } from './auth.gateway.interface';
@@ -15,6 +15,7 @@ describe('Unit test for Auth gateway', () => {
   let authGateway: IAuthGateway;
   const authAdapter: IAuthAdapter = {
     verify: mockVerify.mockReturnValue(from([{ userId }])),
+    generate: jest.fn().mockReturnValue(from(['fake-token'])),
   };
 
   beforeEach(() => {
@@ -27,11 +28,17 @@ describe('Unit test for Auth gateway', () => {
     expect(response).toStrictEqual({ userId: expect.any(String) });
   });
 
-  it('should return null if token is invalid', async () => {
-    mockVerify.mockReturnValue(from([null]));
+  it('should throw an error if token is invalid', async () => {
+    mockVerify.mockReturnValueOnce(
+      throwError(() => new Error('Invalid token')),
+    );
 
-    const response = await authGateway.verify('fake-token');
+    await expect(authGateway.verify('fake-token')).rejects.toThrow();
+  });
 
-    expect(response).toBeNull();
+  it('should generate a recover password token', async () => {
+    const response = await authGateway.generateRecoverPasswordToken(userId);
+
+    expect(response).toStrictEqual(expect.any(String));
   });
 });

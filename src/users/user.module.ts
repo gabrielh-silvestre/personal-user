@@ -27,14 +27,16 @@ import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 import {
   AUTH_ADAPTER,
   AUTH_GATEWAY,
+  AUTH_QUEUE,
   MAIL_ADAPTER,
   MAIL_GATEWAY,
+  MAIL_QUEUE,
   USER_DATABASE_ADAPTER,
   USER_REPOSITORY,
 } from './utils/constants';
 
 @Module({
-  imports: [RmqModule.register('MAIL'), RmqModule.register('AUTH')],
+  imports: [RmqModule.register(MAIL_QUEUE), RmqModule.register(AUTH_QUEUE)],
   exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
   controllers: [
     CreateUserController,

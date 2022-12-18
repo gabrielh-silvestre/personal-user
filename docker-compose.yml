@@ -6,6 +6,7 @@ services:
       dockerfile: .docker/Dockerfile.dev
     command: npm run start:dev
     restart: on-failure
+    mem_limit: 512m
     volumes:
       - .:/app
     ports:
@@ -27,6 +28,7 @@ services:
   postgres:
     image: postgres:14.3-alpine
     restart: always
+    mem_limit: 512m
     ports:
       - ${DB_PORT}:5432
     environment:

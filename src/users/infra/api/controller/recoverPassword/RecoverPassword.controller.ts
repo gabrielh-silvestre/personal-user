@@ -6,11 +6,23 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseFilters,
 } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputRecoverPasswordDto } from '@users/useCase/recoverPassword/RecoverPassword.dto';
 
 import { RecoverPasswordUseCase } from '@users/useCase/recoverPassword/RecoverPassword.useCase';
+
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
+
+type InputGrpcRecoverPasswordRequest = {
+  email: string;
+};
+
+type OutputGrpcRecoverPasswordRequest = {
+  success: boolean;
+};
 
 @Controller('users')
 export class RecoverPasswordController {
@@ -34,5 +46,14 @@ export class RecoverPasswordController {
   async handleRestGet(@Param('email') email: string): Promise<void> {
     await this.handle({ email });
     return;
+  }
+
+  @UseFilters(new ExceptionFilterRpc())
+  @GrpcMethod('UserService', 'RecoverPassword')
+  async handleGrpc({
+    email,
+  }: InputGrpcRecoverPasswordRequest): Promise<OutputGrpcRecoverPasswordRequest> {
+    await this.handle({ email });
+    return { success: true };
   }
 }

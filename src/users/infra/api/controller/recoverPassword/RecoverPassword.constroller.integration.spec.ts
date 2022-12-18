@@ -66,5 +66,13 @@ describe('Integration tests for RecoverPassword controller', () => {
 
       expect(response).toBeUndefined();
     });
+
+    it('with gRPC request', async () => {
+      const response = await recoverPasswordController.handleGrpc({
+        email,
+      });
+
+      expect(response).toStrictEqual({ success: true });
+    });
   });
 });

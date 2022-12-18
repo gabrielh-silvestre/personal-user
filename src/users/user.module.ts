@@ -19,6 +19,9 @@ import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
 import { RecoverPasswordController } from './infra/api/controller/recoverPassword/RecoverPassword.controller';
 import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPassword.useCase';
 
+import { ChangePasswordController } from './infra/api/controller/changePassword/ChangePassword.controller';
+import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.useCase';
+
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
 import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
@@ -46,6 +49,7 @@ import {
     GetMeController,
     VerifyCredentialsController,
     RecoverPasswordController,
+    ChangePasswordController,
   ],
   providers: [
     CreateUserUseCase,
@@ -53,6 +57,7 @@ import {
     GetUserByEmailUseCase,
     VerifyCredentialsUseCase,
     RecoverPasswordUseCase,
+    ChangePasswordUseCase,
     {
       provide: MAIL_GATEWAY,
       useClass: MailGateway,

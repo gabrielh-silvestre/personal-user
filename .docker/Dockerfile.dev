@@ -1,5 +1,7 @@
 FROM node:16-alpine AS installer
 
+RUN apk add openssl1.1-compat
+
 WORKDIR /app
 
 COPY ../package.*json .
@@ -9,6 +11,8 @@ RUN npx prisma generate
 
 
 FROM node:16-alpine AS runner
+
+RUN apk add openssl1.1-compat
 
 WORKDIR /app
 

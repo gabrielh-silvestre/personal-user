@@ -11,6 +11,8 @@ import {
 import type { IValidator } from '@shared/domain/validator/validator.interface';
 import type { IUser } from '../entity/user.interface';
 
+import { UserException } from '../exception/User.exception';
+
 export class UserClassValidator implements IValidator<IUser> {
   @IsUUID(4, { message: 'Id must be a valid UUID v4' })
   private readonly id: string;
@@ -62,7 +64,7 @@ export class UserClassValidator implements IValidator<IUser> {
 
     if (error) {
       const constraint = Object.values(error.constraints)[0];
-      throw new Error(constraint);
+      throw new UserException(constraint);
     }
   }
 }

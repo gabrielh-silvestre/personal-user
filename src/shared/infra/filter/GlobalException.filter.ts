@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { Exception } from '@exceptions/entity/Exception';
+import { UserException } from '@users/domain/exception/User.exception';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Catch(Error)
@@ -18,6 +19,10 @@ export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
   private normalizeError(error: Error) {
     if (error instanceof Exception) {
       return error;
+    }
+
+    if (error instanceof UserException) {
+      return ExceptionFactory.unprocessableEntity(error.message);
     }
 
     if (error instanceof HttpException) {

@@ -32,9 +32,29 @@ message VerifyCredentialsResponse {
     string id = 1;
 }
 
+message RecoverPasswordRequest {
+    string email = 1;
+}
+
+message RecoverPasswordResponse {
+    bool success = 1;
+}
+
+message ChangePasswordRequest {
+    string token = 1;
+    string password = 2;
+    string confirm_password = 3;
+}
+
+message ChangePasswordResponse {
+    bool success = 1;
+}
+
 service UserService {
     rpc CreateUser(CreateUserRequest) returns (UserResponse);
     rpc RecoverUser(RecoverUserRequest) returns (UserResponse);
     rpc GetMe(GetMeRequest) returns (UserResponse);
     rpc VerifyCredentials(VerifyCredentialsRequest) returns (VerifyCredentialsResponse);
+    rpc RecoverPassword(RecoverPasswordRequest) returns (RecoverPasswordResponse);
+    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
 }

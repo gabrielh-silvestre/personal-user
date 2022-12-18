@@ -68,5 +68,16 @@ describe('Integration test for ChangePassword controller', () => {
 
       expect(newPassword).not.toEqual(oldPassword);
     });
+
+    it('with gRPC request', async () => {
+      await changePasswordController.handleGrpc(
+        { user: { userId: id } } as Request,
+        VALID_PASSWORD_CHANGE,
+      );
+
+      const { password: newPassword } = await userRepository.find(id);
+
+      expect(newPassword).not.toEqual(oldPassword);
+    });
   });
 });

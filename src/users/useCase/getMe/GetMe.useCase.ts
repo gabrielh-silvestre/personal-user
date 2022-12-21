@@ -20,6 +20,12 @@ export class GetMeUseCase {
       throw ExceptionFactory.notFound('User not found');
     }
 
-    return foundUser;
+    return {
+      id: foundUser.id,
+      username: foundUser.username,
+      email: foundUser.email,
+      lastUpdate: foundUser.updatedAt,
+      createdAt: foundUser.createdAt,
+    };
   }
 }

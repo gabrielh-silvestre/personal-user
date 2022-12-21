@@ -26,6 +26,13 @@ describe('Integration tests for Get User by id use case', () => {
     const user = await getMeUseCase.execute(USERS_MOCK[0].id);
 
     expect(user).not.toBeNull();
+    expect(user).toStrictEqual({
+      id: expect.any(String),
+      username: expect.any(String),
+      email: expect.any(String),
+      lastUpdate: expect.any(Date),
+      createdAt: expect.any(Date),
+    });
   });
 
   it('should throw an error if user is not found', async () => {

@@ -2,27 +2,23 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
 import type {
+  IMailPresenter,
+  OutputMailPresenterDto,
+} from '@users/infra/presenter/mail/Mail.presenter.interface';
+import type {
   IMailGateway,
   InputDeliveryInfo,
   InputRecoverPasswordInfo,
 } from './mail.gateway.interface';
 
-import { MAIL_ADAPTER } from '@users/utils/constants';
+import { MAIL_ADAPTER, MAIL_PRESENTER } from '@users/utils/constants';
 
 @Injectable()
 export class MailGateway implements IMailGateway {
   constructor(
     @Inject(MAIL_ADAPTER) private readonly mailAdapter: IMailAdapter,
+    @Inject(MAIL_PRESENTER) private readonly mailPresenter: IMailPresenter,
   ) {}
-
-  private welcomeMailData({ email, username }: InputDeliveryInfo) {
-    return {
-      to: email,
-      subject: 'Welcome to the S1 auth service!',
-      text: `Welcome to the S1 auth service, ${username}!`,
-      html: `<b>Welcome to the S1 auth service, ${username}!</b>`,
-    };
-  }
 
   private recoverPasswordMailData({
     email,
@@ -37,10 +33,25 @@ export class MailGateway implements IMailGateway {
     };
   }
 
-  async welcomeMail(data: InputDeliveryInfo): Promise<void> {
-    const { to, subject, text, html } = this.welcomeMailData(data);
+  private async presentMailData(
+    email: string,
+    username: string,
+    token?: string,
+  ): Promise<OutputMailPresenterDto> {
+    return this.mailPresenter.present({
+      username,
+      email,
+      token,
+    }) as Promise<OutputMailPresenterDto>;
+  }
 
-    this.mailAdapter.send(to, subject, { text, html });
+  async welcomeMail(data: InputDeliveryInfo): Promise<void> {
+    const { to, subject, html } = await this.presentMailData(
+      data.email,
+      data.username,
+    );
+
+    this.mailAdapter.send(to, subject, { text: '', html });
   }
 
   async recoverPasswordMail(data: InputRecoverPasswordInfo): Promise<void> {

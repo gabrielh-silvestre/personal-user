@@ -8,6 +8,7 @@ import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserP
 import { UserRepository } from './infra/repository/User.repository';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
+import { CreateUserMailPresenter } from './infra/presenter/mail/create/CreateUser.mail.presenter';
 import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
 
 import { VerifyCredentialsController } from './infra/api/controller/verifyCredentials/VerifyCredentials.controller';
@@ -28,13 +29,17 @@ import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
+import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
+
 import {
   AUTH_ADAPTER,
   AUTH_GATEWAY,
   AUTH_QUEUE,
   MAIL_ADAPTER,
   MAIL_GATEWAY,
+  MAIL_PRESENTER,
   MAIL_QUEUE,
+  TEMPLATE_ADAPTER,
   USER_DATABASE_ADAPTER,
   USER_REPOSITORY,
 } from './utils/constants';
@@ -64,6 +69,10 @@ import {
       useClass: MailRmqAdapter,
     },
     {
+      provide: MAIL_PRESENTER,
+      useClass: CreateUserMailPresenter,
+    },
+    {
       provide: AUTH_ADAPTER,
       useClass: AuthRmqAdapter,
     },
@@ -78,6 +87,10 @@ import {
     {
       provide: USER_DATABASE_ADAPTER,
       useClass: UserDatabasePrismaAdapter,
+    },
+    {
+      provide: TEMPLATE_ADAPTER,
+      useClass: TemplateEngineEjsAdapter,
     },
   ],
 })

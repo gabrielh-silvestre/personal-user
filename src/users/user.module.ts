@@ -22,8 +22,6 @@ import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPasswor
 import { ChangePasswordController } from './infra/api/controller/changePassword/ChangePassword.controller';
 import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.useCase';
 
-import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
-
 import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
@@ -43,7 +41,7 @@ import {
 
 @Module({
   imports: [RmqModule.register(MAIL_QUEUE), RmqModule.register(AUTH_QUEUE)],
-  exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
+  exports: [GetUserByIdUseCase],
   controllers: [
     CreateUserController,
     GetMeController,
@@ -54,7 +52,6 @@ import {
   providers: [
     CreateUserUseCase,
     GetUserByIdUseCase,
-    GetUserByEmailUseCase,
     VerifyCredentialsUseCase,
     RecoverPasswordUseCase,
     ChangePasswordUseCase,

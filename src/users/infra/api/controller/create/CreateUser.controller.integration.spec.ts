@@ -59,6 +59,9 @@ describe('Integration test for Create User controller', () => {
       expect(response).toStrictEqual({
         id: expect.any(String),
         username: expect.any(String),
+        email: expect.any(String),
+        lastUpdate: expect.any(String),
+        created: expect.any(String),
       });
     });
 
@@ -69,6 +72,9 @@ describe('Integration test for Create User controller', () => {
       expect(newUser).toStrictEqual({
         id: expect.any(String),
         username: expect.any(String),
+        email: expect.any(String),
+        lastUpdate: expect.any(String),
+        created: expect.any(String),
       });
     });
   });

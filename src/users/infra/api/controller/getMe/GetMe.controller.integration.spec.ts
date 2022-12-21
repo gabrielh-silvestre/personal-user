@@ -64,6 +64,9 @@ describe('Integration tests for Get Me controller', () => {
       expect(response).toStrictEqual({
         id: expect.any(String),
         username: expect.any(String),
+        email: expect.any(String),
+        lastUpdate: expect.any(Date),
+        createdAt: expect.any(Date),
       });
     });
 
@@ -76,6 +79,9 @@ describe('Integration tests for Get Me controller', () => {
       expect(newUser).toStrictEqual({
         id: expect.any(String),
         username: expect.any(String),
+        email: expect.any(String),
+        lastUpdate: expect.any(Date),
+        createdAt: expect.any(Date),
       });
     });
   });

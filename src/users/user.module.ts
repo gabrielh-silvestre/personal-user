@@ -14,7 +14,7 @@ import { VerifyCredentialsController } from './infra/api/controller/verifyCreden
 import { VerifyCredentialsUseCase } from './useCase/verifyCredentials/VerifyCredentials.useCase';
 
 import { GetMeController } from './infra/api/controller/getMe/GetMe.controller';
-import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
+import { GetMeUseCase } from './useCase/getMe/GetMe.useCase';
 
 import { RecoverPasswordController } from './infra/api/controller/recoverPassword/RecoverPassword.controller';
 import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPassword.useCase';
@@ -41,7 +41,7 @@ import {
 
 @Module({
   imports: [RmqModule.register(MAIL_QUEUE), RmqModule.register(AUTH_QUEUE)],
-  exports: [GetUserByIdUseCase],
+  exports: [GetMeUseCase],
   controllers: [
     CreateUserController,
     GetMeController,
@@ -51,7 +51,7 @@ import {
   ],
   providers: [
     CreateUserUseCase,
-    GetUserByIdUseCase,
+    GetMeUseCase,
     VerifyCredentialsUseCase,
     RecoverPasswordUseCase,
     ChangePasswordUseCase,

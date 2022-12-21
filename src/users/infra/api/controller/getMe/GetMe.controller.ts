@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 
-import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
+import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
 import { AuthGuard } from '../../guard/Auth.guard';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
@@ -23,10 +23,10 @@ type OutPutGetMe = {
 
 @Controller('/users')
 export class GetMeController {
-  constructor(private readonly getUserByIdUseCase: GetUserByIdUseCase) {}
+  constructor(private readonly getMeUseCase: GetMeUseCase) {}
 
   private async handle(userId: string): Promise<OutPutGetMe> {
-    const user = await this.getUserByIdUseCase.execute(userId);
+    const user = await this.getMeUseCase.execute(userId);
 
     return {
       id: user.id,

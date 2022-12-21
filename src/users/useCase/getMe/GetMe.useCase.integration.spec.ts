@@ -1,6 +1,6 @@
 import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
-import { GetUserByIdUseCase } from './GetUserById.useCase';
+import { GetMeUseCase } from './GetMe.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
@@ -11,7 +11,7 @@ describe('Integration tests for Get User by id use case', () => {
   let userDatabaseGateway: IUserDatabaseAdapter;
   let userRepository: UserRepository;
 
-  let getUserByIdUseCase: GetUserByIdUseCase;
+  let getMeUseCase: GetMeUseCase;
 
   beforeEach(() => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
@@ -19,17 +19,17 @@ describe('Integration tests for Get User by id use case', () => {
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
     userRepository = new UserRepository(userDatabaseGateway);
 
-    getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
+    getMeUseCase = new GetMeUseCase(userRepository);
   });
 
   it('should get a user by id with success', async () => {
-    const user = await getUserByIdUseCase.execute(USERS_MOCK[0].id);
+    const user = await getMeUseCase.execute(USERS_MOCK[0].id);
 
     expect(user).not.toBeNull();
   });
 
   it('should throw an error if user is not found', async () => {
-    await expect(getUserByIdUseCase.execute('invalid-id')).rejects.toThrow(
+    await expect(getMeUseCase.execute('invalid-id')).rejects.toThrow(
       'User not found',
     );
   });

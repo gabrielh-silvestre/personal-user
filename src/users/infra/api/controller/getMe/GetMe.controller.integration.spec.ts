@@ -5,7 +5,7 @@ import { from } from 'rxjs';
 
 import { GetMeController } from './GetMe.controller';
 
-import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
+import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
@@ -25,9 +25,9 @@ describe('Integration tests for Get Me controller', () => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
+      controllers: [GetMeController],
       providers: [
-        GetMeController,
-        GetUserByIdUseCase,
+        GetMeUseCase,
         {
           provide: USER_REPOSITORY,
           useClass: UserRepository,

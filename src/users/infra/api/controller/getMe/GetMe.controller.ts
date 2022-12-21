@@ -15,7 +15,7 @@ import type { OutputGetMeDto } from '@users/useCase/getMe/GetMe.dto';
 import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
 import { AuthGuard } from '../../guard/Auth.guard';
-import { GetMePresenter } from '@users/infra/presenter/rest/getMe/GetMe.presenter';
+import { GetMeRestPresenter } from '@users/infra/presenter/rest/getMe/GetMe.rest.presenter';
 import { RestInterceptor } from '../../interceptor/Rest.interceptor';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
@@ -29,7 +29,7 @@ export class GetMeController {
 
   @UseGuards(AuthGuard)
   @Get('/me')
-  @UseInterceptors(RestInterceptor(new GetMePresenter()))
+  @UseInterceptors(RestInterceptor(new GetMeRestPresenter()))
   async handleRest(@Request() data: IRequest): Promise<OutputGetMeDto> {
     return this.handle(data.user.userId);
   }

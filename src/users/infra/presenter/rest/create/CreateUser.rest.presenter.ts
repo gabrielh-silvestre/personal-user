@@ -6,7 +6,7 @@ import type {
 } from '../Rest.presenter.interface';
 import type { OutputCreateUserDto } from '@users/useCase/create/CreateUser.dto';
 
-export class CreateUserPresenter
+export class CreateUserRestPresenter
   implements IRestPresenter<OutputCreateUserDto>
 {
   private static readonly relatedLinks: EmbeddedLink[] = [
@@ -25,7 +25,7 @@ export class CreateUserPresenter
 
     return {
       _links: { self: { href: selfLink } },
-      _embedded: CreateUserPresenter.relatedLinks,
+      _embedded: CreateUserRestPresenter.relatedLinks,
       data,
     };
   }

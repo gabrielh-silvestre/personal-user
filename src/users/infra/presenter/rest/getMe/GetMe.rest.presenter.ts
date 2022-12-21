@@ -5,7 +5,7 @@ import type {
 } from '../Rest.presenter.interface';
 import type { OutputGetMeDto } from '@users/useCase/getMe/GetMe.dto';
 
-export class GetMePresenter implements IRestPresenter<OutputGetMeDto> {
+export class GetMeRestPresenter implements IRestPresenter<OutputGetMeDto> {
   present(
     dto: InputRestPresenterDto<OutputGetMeDto>,
   ): OutputRestPresenterDto<OutputGetMeDto> {

@@ -15,7 +15,7 @@ import type {
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
 import { RestInterceptor } from '../../interceptor/Rest.interceptor';
-import { CreateUserPresenter } from '@users/infra/presenter/rest/create/CreateUser.presenter';
+import { CreateUserRestPresenter } from '@users/infra/presenter/rest/create/CreateUser.rest.presenter';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
 @Controller('/users')
@@ -27,7 +27,7 @@ export class CreateUserController {
   }
 
   @Post()
-  @UseInterceptors(RestInterceptor(new CreateUserPresenter()))
+  @UseInterceptors(RestInterceptor(new CreateUserRestPresenter()))
   async handleRest(
     @Body() data: InputCreateUserDto,
   ): Promise<OutputCreateUserDto> {

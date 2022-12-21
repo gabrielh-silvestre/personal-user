@@ -61,6 +61,9 @@ export class CreateUserUseCase {
     return {
       id: newUser.id,
       username: newUser.username,
+      email: newUser.email,
+      lastUpdate: newUser.updatedAt,
+      created: newUser.createdAt,
     };
   }
 }

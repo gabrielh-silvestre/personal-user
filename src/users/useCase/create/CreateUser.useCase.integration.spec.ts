@@ -55,6 +55,9 @@ describe('Integration test for Create User use case', () => {
     expect(newUser).toStrictEqual({
       id: expect.any(String),
       username: expect.any(String),
+      email: expect.any(String),
+      lastUpdate: expect.any(Date),
+      created: expect.any(Date),
     });
 
     expect(mailAdapter.send).toHaveBeenCalledTimes(1);

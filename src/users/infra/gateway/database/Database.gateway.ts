@@ -14,19 +14,19 @@ export class DatabaseGateway implements IUserRepository {
   ) {}
 
   async find(id: string): Promise<User> {
-    const foundUser = await this.userDatabaseAdapter.getOne({ id });
+    const foundUser = await this.userDatabaseAdapter.findOne({ id });
 
     return foundUser;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const foundUser = await this.userDatabaseAdapter.getOne({ email });
+    const foundUser = await this.userDatabaseAdapter.findOne({ email });
 
     return foundUser;
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    const foundUser = await this.userDatabaseAdapter.getOne({ email });
+    const foundUser = await this.userDatabaseAdapter.findOne({ email });
 
     return !!foundUser;
   }

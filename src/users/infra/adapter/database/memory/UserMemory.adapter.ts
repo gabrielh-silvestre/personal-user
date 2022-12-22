@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
-import { User } from '@users/domain/entity/User';
-import { IUser } from '@users/domain/entity/user.interface';
-
 import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
+import type { IUser } from '@users/domain/entity/user.interface';
+
+import { User } from '@users/domain/entity/User';
 
 @Injectable()
 export class UserDatabaseMemoryAdapter implements IUserDatabaseAdapter {
   private static readonly USERS: User[] = [];
 
-  async getAll(): Promise<User[]> {
+  async findAll(): Promise<User[]> {
     return UserDatabaseMemoryAdapter.USERS;
   }
 
-  getOne<T extends Partial<IUser>>(dto: T): Promise<User> {
+  async findOne<T extends Partial<IUser>>(dto: T): Promise<User> {
     const foundUser = UserDatabaseMemoryAdapter.USERS.find((user) =>
       Object.entries(dto).every(([key, value]) => user[key] === value),
     );
 
-    return Promise.resolve(foundUser);
+    return foundUser;
   }
 
   async create(user: User): Promise<void> {

@@ -26,12 +26,12 @@ export class UserDatabasePrismaAdapter implements IUserDatabaseAdapter {
     );
   }
 
-  async getAll(): Promise<User[]> {
+  async findAll(): Promise<User[]> {
     const foundUsers = await this.client.user.findMany();
     return foundUsers.map(this.convertToUser);
   }
 
-  async getOne<T extends Partial<IUser>>(dto: T): Promise<User> {
+  async findOne<T extends Partial<IUser>>(dto: T): Promise<User> {
     const normalizedDto = Object.entries(dto).reduce(
       (acc, [key, value]) => ({
         ...acc,

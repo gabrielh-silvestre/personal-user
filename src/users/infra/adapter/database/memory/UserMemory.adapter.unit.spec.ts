@@ -15,7 +15,7 @@ describe('Unit test infra UserMemory gateway', () => {
   });
 
   it('should return all users', async () => {
-    const users = await userGateway.getAll();
+    const users = await userGateway.findAll();
 
     expect(users.length).toBe(USERS_MOCK.length);
   });
@@ -23,7 +23,7 @@ describe('Unit test infra UserMemory gateway', () => {
   it('should find a user by id', async () => {
     const [userToFind] = USERS_MOCK;
 
-    const foundUser = await userGateway.getOne({ id: userToFind.id });
+    const foundUser = await userGateway.findOne({ id: userToFind.id });
 
     expect(foundUser).not.toBeNull();
   });
@@ -31,7 +31,7 @@ describe('Unit test infra UserMemory gateway', () => {
   it('should find a user by email', async () => {
     const [userToFind] = USERS_MOCK;
 
-    const foundUser = await userGateway.getOne({ email: userToFind.email });
+    const foundUser = await userGateway.findOne({ email: userToFind.email });
 
     expect(foundUser).not.toBeNull();
   });
@@ -41,7 +41,7 @@ describe('Unit test infra UserMemory gateway', () => {
 
     await userGateway.create(newUser);
 
-    const foundUser = await userGateway.getOne({ id: newUser.id });
+    const foundUser = await userGateway.findOne({ id: newUser.id });
 
     expect(foundUser).not.toBeNull();
     expect(foundUser?.id).toBeDefined();
@@ -55,7 +55,7 @@ describe('Unit test infra UserMemory gateway', () => {
 
     await userGateway.update(userToUpdate);
 
-    const foundUser = await userGateway.getOne({ id: userToUpdate.id });
+    const foundUser = await userGateway.findOne({ id: userToUpdate.id });
 
     expect(foundUser).not.toBeNull();
     expect(foundUser?.id).toBeDefined();

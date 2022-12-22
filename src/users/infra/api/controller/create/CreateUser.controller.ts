@@ -14,7 +14,8 @@ import type {
 
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
-import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
+import { RestInterceptor } from '../../interceptor/Rest.interceptor';
+import { CreateUserRestPresenter } from '@users/infra/presenter/rest/create/CreateUser.rest.presenter';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
 @Controller('/users')
@@ -22,12 +23,11 @@ export class CreateUserController {
   constructor(private readonly createUserUseCase: CreateUserUseCase) {}
 
   private async handle(data: InputCreateUserDto): Promise<OutputCreateUserDto> {
-    const { id, username } = await this.createUserUseCase.execute(data);
-    return { id, username };
+    return this.createUserUseCase.execute(data);
   }
 
   @Post()
-  @UseInterceptors(new ParseHalJsonInterceptor<OutputCreateUserDto>())
+  @UseInterceptors(RestInterceptor(new CreateUserRestPresenter()))
   async handleRest(
     @Body() data: InputCreateUserDto,
   ): Promise<OutputCreateUserDto> {

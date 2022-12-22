@@ -1,7 +1,5 @@
-import { Module } from '@nestjs/common/decorators';
-// import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';
 
-// import { AuthModule } from '@auth/auth.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
 import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserPrisma.adapter';
@@ -14,7 +12,7 @@ import { VerifyCredentialsController } from './infra/api/controller/verifyCreden
 import { VerifyCredentialsUseCase } from './useCase/verifyCredentials/VerifyCredentials.useCase';
 
 import { GetMeController } from './infra/api/controller/getMe/GetMe.controller';
-import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
+import { GetMeUseCase } from './useCase/getMe/GetMe.useCase';
 
 import { RecoverPasswordController } from './infra/api/controller/recoverPassword/RecoverPassword.controller';
 import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPassword.useCase';
@@ -22,13 +20,14 @@ import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPasswor
 import { ChangePasswordController } from './infra/api/controller/changePassword/ChangePassword.controller';
 import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.useCase';
 
-import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
-
 import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
+import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
+
+import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
 
 import {
   AUTH_ADAPTER,
@@ -36,14 +35,16 @@ import {
   AUTH_QUEUE,
   MAIL_ADAPTER,
   MAIL_GATEWAY,
+  MAIL_PRESENTER,
   MAIL_QUEUE,
+  TEMPLATE_ADAPTER,
   USER_DATABASE_ADAPTER,
   USER_REPOSITORY,
 } from './utils/constants';
 
 @Module({
   imports: [RmqModule.register(MAIL_QUEUE), RmqModule.register(AUTH_QUEUE)],
-  exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
+  exports: [GetMeUseCase],
   controllers: [
     CreateUserController,
     GetMeController,
@@ -53,8 +54,7 @@ import {
   ],
   providers: [
     CreateUserUseCase,
-    GetUserByIdUseCase,
-    GetUserByEmailUseCase,
+    GetMeUseCase,
     VerifyCredentialsUseCase,
     RecoverPasswordUseCase,
     ChangePasswordUseCase,
@@ -65,6 +65,10 @@ import {
     {
       provide: MAIL_ADAPTER,
       useClass: MailRmqAdapter,
+    },
+    {
+      provide: MAIL_PRESENTER,
+      useClass: MailPresenter,
     },
     {
       provide: AUTH_ADAPTER,
@@ -81,6 +85,10 @@ import {
     {
       provide: USER_DATABASE_ADAPTER,
       useClass: UserDatabasePrismaAdapter,
+    },
+    {
+      provide: TEMPLATE_ADAPTER,
+      useClass: TemplateEngineEjsAdapter,
     },
   ],
 })

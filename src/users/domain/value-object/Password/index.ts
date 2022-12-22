@@ -2,6 +2,8 @@ import { hashSync, compareSync, genSaltSync } from 'bcrypt';
 
 import type { IPassword } from './password.interface';
 
+import { UserException } from '@users/domain/exception/User.exception';
+
 export class Password implements IPassword {
   private static readonly MIN_LENGTH = 8;
   private static readonly MAX_LENGTH = 16;
@@ -24,17 +26,17 @@ export class Password implements IPassword {
 
   private validate(password: string): void | never {
     if (!password || password.length === 0) {
-      throw new Error('Password is required');
+      throw new UserException('Password is required');
     }
 
     if (password.length < Password.MIN_LENGTH) {
-      throw new Error(
+      throw new UserException(
         `Password must be at least ${Password.MIN_LENGTH} characters long`,
       );
     }
 
     if (password.length > Password.MAX_LENGTH) {
-      throw new Error(
+      throw new UserException(
         `Password must be at most ${Password.MAX_LENGTH} characters long`,
       );
     }

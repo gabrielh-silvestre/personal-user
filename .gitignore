@@ -36,3 +36,8 @@ lerna-debug.log*
 
 # env
 .env
+
+# local test files
+*.t.js
+*.t.ts
+*.t.html

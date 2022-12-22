@@ -9,4 +9,7 @@ export interface InputCreateUserDto {
 export interface OutputCreateUserDto {
   id: string;
   username: string;
+  email: string;
+  lastUpdate: Date;
+  created: Date;
 }

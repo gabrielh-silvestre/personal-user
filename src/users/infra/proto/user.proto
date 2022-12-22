@@ -5,6 +5,9 @@ package proto.users;
 message UserResponse {
     string id = 1;
     string username = 2;
+    string email = 3;
+    string last_update = 4;
+    string created_at = 5;
 }
 
 message CreateUserRequest {
@@ -13,10 +16,6 @@ message CreateUserRequest {
     string confirm_email = 3;
     string password = 4;
     string confirm_password = 5;
-}
-
-message RecoverUserRequest {
-    string token = 1;
 }
 
 message GetMeRequest {
@@ -52,7 +51,6 @@ message ChangePasswordResponse {
 
 service UserService {
     rpc CreateUser(CreateUserRequest) returns (UserResponse);
-    rpc RecoverUser(RecoverUserRequest) returns (UserResponse);
     rpc GetMe(GetMeRequest) returns (UserResponse);
     rpc VerifyCredentials(VerifyCredentialsRequest) returns (VerifyCredentialsResponse);
     rpc RecoverPassword(RecoverPasswordRequest) returns (RecoverPasswordResponse);

@@ -4,7 +4,7 @@ import { VerifyCredentialsController } from './VerifyCredentials.controller';
 import { VerifyCredentialsUseCase } from '@users/useCase/verifyCredentials/VerifyCredentials.useCase';
 
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 
@@ -20,7 +20,7 @@ describe('Integration tests for Verify Credentials controller', () => {
   let verifyCredentialsController: VerifyCredentialsController;
 
   beforeEach(async () => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [VerifyCredentialsController],
@@ -32,7 +32,7 @@ describe('Integration tests for Verify Credentials controller', () => {
         },
         {
           provide: USER_DATABASE_ADAPTER,
-          useClass: UserDatabaseMemoryAdapter,
+          useClass: DatabaseMemoryAdapter,
         },
         {
           provide: RmqService,

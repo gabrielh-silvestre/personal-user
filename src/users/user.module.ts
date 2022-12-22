@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
-import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/DatabasePrisma.adapter';
+import { DatabasePrismaAdapter } from './infra/adapter/database/prisma/DatabasePrisma.adapter';
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
@@ -84,7 +84,7 @@ import {
     },
     {
       provide: USER_DATABASE_ADAPTER,
-      useClass: UserDatabasePrismaAdapter,
+      useClass: DatabasePrismaAdapter,
     },
     {
       provide: TEMPLATE_ADAPTER,

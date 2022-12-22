@@ -7,7 +7,7 @@ import { GetMeController } from './GetMe.controller';
 
 import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -22,7 +22,7 @@ describe('Integration tests for Get Me controller', () => {
   const [{ id: userId }] = USERS_MOCK;
 
   beforeEach(async () => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [GetMeController],
@@ -34,7 +34,7 @@ describe('Integration tests for Get Me controller', () => {
         },
         {
           provide: USER_DATABASE_ADAPTER,
-          useClass: UserDatabaseMemoryAdapter,
+          useClass: DatabaseMemoryAdapter,
         },
         {
           provide: AUTH_GATEWAY,

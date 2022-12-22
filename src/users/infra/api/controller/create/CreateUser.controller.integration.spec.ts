@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -25,7 +25,7 @@ describe('Integration test for Create User controller', () => {
   let userController: CreateUserController;
 
   beforeEach(async () => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [CreateUserController],
@@ -39,7 +39,7 @@ describe('Integration test for Create User controller', () => {
         },
         {
           provide: USER_DATABASE_ADAPTER,
-          useClass: UserDatabaseMemoryAdapter,
+          useClass: DatabaseMemoryAdapter,
         },
         {
           provide: DATABASE_GATEWAY,

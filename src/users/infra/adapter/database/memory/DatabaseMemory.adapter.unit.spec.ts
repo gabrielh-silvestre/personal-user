@@ -2,7 +2,7 @@ import type { IDatabaseAdapter } from '../Database.adapter.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { UserDatabaseMemoryAdapter } from './DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from './DatabaseMemory.adapter';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
@@ -10,8 +10,8 @@ describe('Unit test infra UserMemory gateway', () => {
   let userGateway: IDatabaseAdapter;
 
   beforeEach(() => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
-    userGateway = new UserDatabaseMemoryAdapter();
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    userGateway = new DatabaseMemoryAdapter();
   });
 
   it('should return all users', async () => {

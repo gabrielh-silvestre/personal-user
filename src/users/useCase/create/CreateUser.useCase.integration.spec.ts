@@ -7,7 +7,7 @@ import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.ga
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
@@ -31,7 +31,7 @@ const INVALID_NEW_USER = {
 };
 
 describe('Integration test for Create User use case', () => {
-  UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+  DatabaseMemoryAdapter.reset(USERS_MOCK);
 
   let databaseAdapter: IDatabaseAdapter;
   let databaseGateway: IDatabaseGateway;
@@ -49,7 +49,7 @@ describe('Integration test for Create User use case', () => {
   const spyWelcomeMail = jest.spyOn(MailGateway.prototype, 'welcomeMail');
 
   beforeEach(() => {
-    databaseAdapter = new UserDatabaseMemoryAdapter();
+    databaseAdapter = new DatabaseMemoryAdapter();
     databaseGateway = new DatabaseGateway(databaseAdapter);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);

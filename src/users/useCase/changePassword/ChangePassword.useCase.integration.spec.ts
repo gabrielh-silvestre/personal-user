@@ -3,7 +3,7 @@ import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.ad
 
 import { ChangePasswordUseCase } from './ChangePassword.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -18,9 +18,9 @@ describe('Integration test for ChangePassword use case', () => {
   let changePasswordUseCase: ChangePasswordUseCase;
 
   beforeEach(() => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    databaseAdapter = new UserDatabaseMemoryAdapter();
+    databaseAdapter = new DatabaseMemoryAdapter();
     databaseGateway = new DatabaseGateway(databaseAdapter);
 
     changePasswordUseCase = new ChangePasswordUseCase(databaseGateway);

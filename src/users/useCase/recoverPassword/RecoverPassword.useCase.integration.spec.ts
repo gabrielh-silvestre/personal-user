@@ -12,7 +12,7 @@ import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.ga
 
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
@@ -50,11 +50,11 @@ describe('Integration test for RecoverPassword use case', () => {
   );
 
   beforeAll(() => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
   });
 
   beforeEach(() => {
-    databaseAdapter = new UserDatabaseMemoryAdapter();
+    databaseAdapter = new DatabaseMemoryAdapter();
     databaseGateway = new DatabaseGateway(databaseAdapter);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);

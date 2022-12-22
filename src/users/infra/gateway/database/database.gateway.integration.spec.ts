@@ -3,7 +3,7 @@ import type { IDatabaseGateway } from './Database.gateway.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { UserDatabaseMemoryAdapter } from '../../adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from '../../adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from './Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -13,9 +13,9 @@ describe('Integration test infra DatabaseGateway', () => {
   let databaseGateway: IDatabaseGateway;
 
   beforeEach(() => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    databaseAdapter = new UserDatabaseMemoryAdapter();
+    databaseAdapter = new DatabaseMemoryAdapter();
     databaseGateway = new DatabaseGateway(databaseAdapter);
   });
 

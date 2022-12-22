@@ -8,7 +8,7 @@ import { User } from '@users/domain/entity/User';
 import { UserFactory } from '@users/domain/factory/User.factory';
 
 @Injectable()
-export class UserDatabasePrismaAdapter implements IDatabaseAdapter {
+export class DatabasePrismaAdapter implements IDatabaseAdapter {
   private readonly client: PrismaClient;
 
   constructor() {

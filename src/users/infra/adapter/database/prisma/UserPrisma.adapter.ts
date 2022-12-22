@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient, User as PrismaUser } from '@prisma/client';
 
+import type { IUser } from '@users/domain/entity/user.interface';
+import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
+
 import { User } from '@users/domain/entity/User';
 import { UserFactory } from '@users/domain/factory/User.factory';
-
-import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
 
 @Injectable()
 export class UserDatabasePrismaAdapter implements IUserDatabaseAdapter {
@@ -30,20 +31,20 @@ export class UserDatabasePrismaAdapter implements IUserDatabaseAdapter {
     return foundUsers.map(this.convertToUser);
   }
 
-  async getById(id: string): Promise<User> {
-    const foundUser = await this.client.user.findUnique({
-      where: { id },
+  async getOne<T extends Partial<IUser>>(dto: T): Promise<User> {
+    const normalizedDto = Object.entries(dto).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: value,
+      }),
+      {},
+    );
+
+    const foundUser = await this.client.user.findFirst({
+      where: normalizedDto,
     });
 
-    return foundUser ? this.convertToUser(foundUser) : null;
-  }
-
-  async getByEmail(email: string): Promise<User> {
-    const foundUser = await this.client.user.findUnique({
-      where: { email },
-    });
-
-    return foundUser ? this.convertToUser(foundUser) : null;
+    return this.convertToUser(foundUser);
   }
 
   async create(user: User): Promise<void> {

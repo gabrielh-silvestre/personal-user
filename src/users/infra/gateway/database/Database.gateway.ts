@@ -1,13 +1,13 @@
 import { Inject } from '@nestjs/common';
 
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDataBaseGateway } from './Database.gateway.interface';
 import type { IUserDatabaseAdapter } from '../../adapter/database/UserDatabase.adapter.interface';
 
 import { User } from '@users/domain/entity/User';
 
 import { USER_DATABASE_ADAPTER } from '@users/utils/constants';
 
-export class DatabaseGateway implements IUserRepository {
+export class DatabaseGateway implements IDataBaseGateway {
   constructor(
     @Inject(USER_DATABASE_ADAPTER)
     private readonly userDatabaseAdapter: IUserDatabaseAdapter,

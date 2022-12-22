@@ -8,7 +8,7 @@ import type { IAuthAdapter } from '@users/infra/adapter/auth/Auth.adapter.interf
 import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
 
 import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
@@ -24,7 +24,7 @@ const [{ id, email, username }] = USERS_MOCK;
 
 describe('Integration test for RecoverPassword use case', () => {
   let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: IUserRepository;
+  let databaseGateway: IDataBaseGateway;
 
   const mailAdapter: IMailAdapter = {
     send: jest.fn(),
@@ -55,7 +55,7 @@ describe('Integration test for RecoverPassword use case', () => {
 
   beforeEach(() => {
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new DatabaseGateway(userDatabaseGateway);
+    databaseGateway = new DatabaseGateway(userDatabaseGateway);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 
@@ -66,7 +66,7 @@ describe('Integration test for RecoverPassword use case', () => {
     authGateway = new AuthGateway(authAdapter);
 
     recoverPasswordUseCase = new RecoverPasswordUseCase(
-      userRepository,
+      databaseGateway,
       authGateway,
       mailGateway,
     );

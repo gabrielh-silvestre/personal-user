@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { InputChangePasswordDto } from './ChangePassword.dto';
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { User } from '@users/domain/entity/User';
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
@@ -13,7 +13,8 @@ import { DATABASE_GATEWAY } from '@users/utils/constants';
 @Injectable()
 export class ChangePasswordUseCase {
   constructor(
-    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY)
+    private readonly databaseGateway: IDataBaseGateway,
   ) {}
 
   private passwordMatch(
@@ -26,7 +27,7 @@ export class ChangePasswordUseCase {
   }
 
   private async findUser(id: string): Promise<User | never> {
-    const foundUser = await this.userRepository.find(id);
+    const foundUser = await this.databaseGateway.find(id);
 
     if (!foundUser) {
       throw ExceptionFactory.notFound('User not found');
@@ -46,6 +47,6 @@ export class ChangePasswordUseCase {
 
     user.changePassword(PasswordFactory.createNew(newPassword));
 
-    await this.userRepository.update(user);
+    await this.databaseGateway.update(user);
   }
 }

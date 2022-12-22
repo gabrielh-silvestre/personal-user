@@ -9,7 +9,7 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration tests for Get User by id use case', () => {
   let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: DatabaseGateway;
+  let databaseGateway: DatabaseGateway;
 
   let getMeUseCase: GetMeUseCase;
 
@@ -17,9 +17,9 @@ describe('Integration tests for Get User by id use case', () => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new DatabaseGateway(userDatabaseGateway);
+    databaseGateway = new DatabaseGateway(userDatabaseGateway);
 
-    getMeUseCase = new GetMeUseCase(userRepository);
+    getMeUseCase = new GetMeUseCase(databaseGateway);
   });
 
   it('should get a user by id with success', async () => {

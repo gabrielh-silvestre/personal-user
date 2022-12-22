@@ -1,4 +1,4 @@
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
@@ -11,7 +11,7 @@ const [{ email }] = USERS_MOCK;
 
 describe('Integration tests for Verify Credentials use case', () => {
   let userDatabaseAdapter: IUserDatabaseAdapter;
-  let userRepository: IUserRepository;
+  let databaseGateway: IDataBaseGateway;
 
   let verifyCredentialsUseCase: VerifyCredentialsUseCase;
 
@@ -19,9 +19,9 @@ describe('Integration tests for Verify Credentials use case', () => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     userDatabaseAdapter = new UserDatabaseMemoryAdapter();
-    userRepository = new DatabaseGateway(userDatabaseAdapter);
+    databaseGateway = new DatabaseGateway(userDatabaseAdapter);
 
-    verifyCredentialsUseCase = new VerifyCredentialsUseCase(userRepository);
+    verifyCredentialsUseCase = new VerifyCredentialsUseCase(databaseGateway);
   });
 
   it('should verify credentials with success', async () => {

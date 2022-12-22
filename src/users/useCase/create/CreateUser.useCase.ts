@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { IUser } from '@users/domain/entity/user.interface';
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 import type { InputCreateUserDto, OutputCreateUserDto } from './CreateUser.dto';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
@@ -13,12 +13,13 @@ import { MAIL_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 @Injectable()
 export class CreateUserUseCase {
   constructor(
-    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY)
+    private readonly databaseGateway: IDataBaseGateway,
     @Inject(MAIL_GATEWAY) private readonly mailGateway: IMailGateway,
   ) {}
 
   private async isEmailAlreadyInUse(email: string): Promise<void | never> {
-    const isInUse = await this.userRepository.existsByEmail(email);
+    const isInUse = await this.databaseGateway.existsByEmail(email);
 
     if (isInUse) {
       throw ExceptionFactory.conflict('Email already registered');
@@ -55,7 +56,7 @@ export class CreateUserUseCase {
 
     const newUser = UserFactory.create(username, email, password);
 
-    await this.userRepository.create(newUser);
+    await this.databaseGateway.create(newUser);
     this.createUserEmail(newUser);
 
     return {

@@ -1,4 +1,4 @@
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { ChangePasswordUseCase } from './ChangePassword.useCase';
@@ -13,7 +13,7 @@ const NEW_PASSWORD = 'new-password';
 
 describe('Integration test for ChangePassword use case', () => {
   let userDatabaseAdapter: IUserDatabaseAdapter;
-  let userRepository: IUserRepository;
+  let databaseGateway: IDataBaseGateway;
 
   let changePasswordUseCase: ChangePasswordUseCase;
 
@@ -21,9 +21,9 @@ describe('Integration test for ChangePassword use case', () => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     userDatabaseAdapter = new UserDatabaseMemoryAdapter();
-    userRepository = new DatabaseGateway(userDatabaseAdapter);
+    databaseGateway = new DatabaseGateway(userDatabaseAdapter);
 
-    changePasswordUseCase = new ChangePasswordUseCase(userRepository);
+    changePasswordUseCase = new ChangePasswordUseCase(databaseGateway);
   });
 
   it('should change password with success', async () => {
@@ -33,7 +33,7 @@ describe('Integration test for ChangePassword use case', () => {
       confirmPassword: NEW_PASSWORD,
     });
 
-    const { password: newPass } = await userRepository.find(id);
+    const { password: newPass } = await databaseGateway.find(id);
 
     expect(newPass).not.toEqual(oldPass);
   });

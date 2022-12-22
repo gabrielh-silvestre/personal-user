@@ -32,7 +32,7 @@ describe('Integration test for Create User use case', () => {
   UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
   let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: DatabaseGateway;
+  let databaseGateway: DatabaseGateway;
 
   const mailAdapter: IMailAdapter = {
     send: jest.fn(),
@@ -48,11 +48,11 @@ describe('Integration test for Create User use case', () => {
 
   beforeEach(() => {
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new DatabaseGateway(userDatabaseGateway);
+    databaseGateway = new DatabaseGateway(userDatabaseGateway);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 
-    createUserUseCase = new CreateUserUseCase(userRepository, mailGateway);
+    createUserUseCase = new CreateUserUseCase(databaseGateway, mailGateway);
   });
 
   afterEach(() => {

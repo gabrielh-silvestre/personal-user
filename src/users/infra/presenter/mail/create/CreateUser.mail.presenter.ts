@@ -17,7 +17,7 @@ export class CreateUserMailPresenter implements IMailPresenter {
   ) {}
 
   async present(dto: InputMailPresenterDto): Promise<OutputMailPresenterDto> {
-    const html = await this.templateEngine.render('create/CreateUser', {
+    const html = await this.templateEngine.render('WelcomeMail', {
       username: dto.username,
     });
 

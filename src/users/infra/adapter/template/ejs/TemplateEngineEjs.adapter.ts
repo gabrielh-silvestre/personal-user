@@ -11,10 +11,13 @@ export class TemplateEngineEjsAdapter implements ITemplateEngineAdapter {
     variables: Record<string, unknown>,
   ): Promise<string> {
     const templatePath = join(
-      __dirname,
-      '../../../../../..',
-      'users/infra/presenter/mail',
-      `${template}.template.ejs`,
+      process.cwd(),
+      'src',
+      'users',
+      'infra',
+      'views',
+      'mail',
+      `${template}.ejs`,
     );
 
     return this.engine.renderFile(templatePath.toString(), variables, {

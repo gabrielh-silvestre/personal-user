@@ -1,25 +1,26 @@
-import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
+import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.adapter.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { GetMeUseCase } from './GetMe.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration tests for Get User by id use case', () => {
-  let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: UserRepository;
+  let databaseAdapter: IDatabaseAdapter;
+  let databaseGateway: IDatabaseGateway;
 
   let getMeUseCase: GetMeUseCase;
 
   beforeEach(() => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseGateway);
+    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseGateway = new DatabaseGateway(databaseAdapter);
 
-    getMeUseCase = new GetMeUseCase(userRepository);
+    getMeUseCase = new GetMeUseCase(databaseGateway);
   });
 
   it('should get a user by id with success', async () => {

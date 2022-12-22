@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { IUser } from '@users/domain/entity/user.interface';
 import type { InputRecoverPasswordDto } from './RecoverPassword.dto';
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
@@ -11,19 +11,20 @@ import { ExceptionFactory } from '@shared/modules/exceptions/factory/Exception.f
 import {
   AUTH_GATEWAY,
   MAIL_GATEWAY,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 @Injectable()
 export class RecoverPasswordUseCase {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY)
+    private readonly databaseGateway: IDatabaseGateway,
     @Inject(AUTH_GATEWAY) private readonly authGateway: IAuthGateway,
     @Inject(MAIL_GATEWAY) private readonly mailGateway: IMailGateway,
   ) {}
 
   private async foundUserByEmail(email: string): Promise<IUser | never> {
-    const foundUser = await this.userRepository.findByEmail(email);
+    const foundUser = await this.databaseGateway.findByEmail(email);
 
     if (!foundUser) {
       throw ExceptionFactory.notFound('Email not registered');

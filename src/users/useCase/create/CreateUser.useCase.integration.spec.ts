@@ -1,12 +1,14 @@
 import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
 import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
-import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
+
+import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.adapter.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 
@@ -29,10 +31,10 @@ const INVALID_NEW_USER = {
 };
 
 describe('Integration test for Create User use case', () => {
-  UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+  DatabaseMemoryAdapter.reset(USERS_MOCK);
 
-  let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: UserRepository;
+  let databaseAdapter: IDatabaseAdapter;
+  let databaseGateway: IDatabaseGateway;
 
   const mailAdapter: IMailAdapter = {
     send: jest.fn(),
@@ -47,12 +49,12 @@ describe('Integration test for Create User use case', () => {
   const spyWelcomeMail = jest.spyOn(MailGateway.prototype, 'welcomeMail');
 
   beforeEach(() => {
-    userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseGateway);
+    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseGateway = new DatabaseGateway(databaseAdapter);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 
-    createUserUseCase = new CreateUserUseCase(userRepository, mailGateway);
+    createUserUseCase = new CreateUserUseCase(databaseGateway, mailGateway);
   });
 
   afterEach(() => {

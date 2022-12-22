@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
-import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserPrisma.adapter';
-import { UserRepository } from './infra/repository/User.repository';
+import { DatabasePrismaAdapter } from './infra/adapter/database/prisma/DatabasePrisma.adapter';
+import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
 import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
@@ -39,7 +39,7 @@ import {
   MAIL_QUEUE,
   TEMPLATE_ADAPTER,
   USER_DATABASE_ADAPTER,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from './utils/constants';
 
 @Module({
@@ -79,12 +79,12 @@ import {
       useClass: AuthGateway,
     },
     {
-      provide: USER_REPOSITORY,
-      useClass: UserRepository,
+      provide: DATABASE_GATEWAY,
+      useClass: DatabaseGateway,
     },
     {
       provide: USER_DATABASE_ADAPTER,
-      useClass: UserDatabasePrismaAdapter,
+      useClass: DatabasePrismaAdapter,
     },
     {
       provide: TEMPLATE_ADAPTER,

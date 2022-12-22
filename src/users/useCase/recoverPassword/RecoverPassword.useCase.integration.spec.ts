@@ -7,13 +7,13 @@ import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interf
 import type { IAuthAdapter } from '@users/infra/adapter/auth/Auth.adapter.interface';
 import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
 
-import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.adapter.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 import { AuthGateway } from '@users/infra/gateway/auth/Auth.gateway';
@@ -23,8 +23,8 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 const [{ id, email, username }] = USERS_MOCK;
 
 describe('Integration test for RecoverPassword use case', () => {
-  let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: IUserRepository;
+  let databaseAdapter: IDatabaseAdapter;
+  let databaseGateway: IDatabaseGateway;
 
   const mailAdapter: IMailAdapter = {
     send: jest.fn(),
@@ -50,12 +50,12 @@ describe('Integration test for RecoverPassword use case', () => {
   );
 
   beforeAll(() => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
   });
 
   beforeEach(() => {
-    userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseGateway);
+    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseGateway = new DatabaseGateway(databaseAdapter);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 
@@ -66,7 +66,7 @@ describe('Integration test for RecoverPassword use case', () => {
     authGateway = new AuthGateway(authAdapter);
 
     recoverPasswordUseCase = new RecoverPasswordUseCase(
-      userRepository,
+      databaseGateway,
       authGateway,
       mailGateway,
     );

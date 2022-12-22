@@ -3,14 +3,14 @@ import { Test } from '@nestjs/testing';
 import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   MAIL_GATEWAY,
   USER_DATABASE_ADAPTER,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 const VALID_NEW_USER = {
@@ -25,11 +25,11 @@ describe('Integration test for Create User controller', () => {
   let userController: CreateUserController;
 
   beforeEach(async () => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
+      controllers: [CreateUserController],
       providers: [
-        CreateUserController,
         CreateUserUseCase,
         {
           provide: MAIL_GATEWAY,
@@ -39,11 +39,11 @@ describe('Integration test for Create User controller', () => {
         },
         {
           provide: USER_DATABASE_ADAPTER,
-          useClass: UserDatabaseMemoryAdapter,
+          useClass: DatabaseMemoryAdapter,
         },
         {
-          provide: USER_REPOSITORY,
-          useClass: UserRepository,
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
       ],
     }).compile();

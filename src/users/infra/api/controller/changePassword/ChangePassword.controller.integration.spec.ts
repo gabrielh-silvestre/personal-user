@@ -1,10 +1,8 @@
 import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 
-import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
-
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassword.useCase';
 import { ChangePasswordController } from './ChangePassword.controller';
@@ -13,7 +11,7 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
   USER_DATABASE_ADAPTER,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 const [{ id, password: oldPassword }] = USERS_MOCK;
@@ -23,12 +21,12 @@ const VALID_PASSWORD_CHANGE = {
 };
 
 describe('Integration test for ChangePassword controller', () => {
-  let userRepository: IUserRepository;
+  let databaseGateway: DatabaseGateway;
 
   let changePasswordController: ChangePasswordController;
 
   beforeEach(async () => {
-    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+    DatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [ChangePasswordController],
@@ -36,11 +34,11 @@ describe('Integration test for ChangePassword controller', () => {
         ChangePasswordUseCase,
         {
           provide: USER_DATABASE_ADAPTER,
-          useClass: UserDatabaseMemoryAdapter,
+          useClass: DatabaseMemoryAdapter,
         },
         {
-          provide: USER_REPOSITORY,
-          useClass: UserRepository,
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
         {
           provide: AUTH_GATEWAY,
@@ -51,7 +49,7 @@ describe('Integration test for ChangePassword controller', () => {
       ],
     }).compile();
 
-    userRepository = module.get<IUserRepository>(USER_REPOSITORY);
+    databaseGateway = module.get<DatabaseGateway>(DATABASE_GATEWAY);
     changePasswordController = module.get<ChangePasswordController>(
       ChangePasswordController,
     );
@@ -64,7 +62,7 @@ describe('Integration test for ChangePassword controller', () => {
         VALID_PASSWORD_CHANGE,
       );
 
-      const { password: newPassword } = await userRepository.find(id);
+      const { password: newPassword } = await databaseGateway.find(id);
 
       expect(newPassword).not.toEqual(oldPassword);
     });
@@ -75,7 +73,7 @@ describe('Integration test for ChangePassword controller', () => {
         VALID_PASSWORD_CHANGE,
       );
 
-      const { password: newPassword } = await userRepository.find(id);
+      const { password: newPassword } = await databaseGateway.find(id);
 
       expect(newPassword).not.toEqual(oldPassword);
     });

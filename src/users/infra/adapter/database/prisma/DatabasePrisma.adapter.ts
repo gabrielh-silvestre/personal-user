@@ -44,7 +44,7 @@ export class DatabasePrismaAdapter implements IDatabaseAdapter {
       where: normalizedDto,
     });
 
-    return this.convertToUser(foundUser);
+    return foundUser ? this.convertToUser(foundUser) : null;
   }
 
   async create(user: User): Promise<void> {

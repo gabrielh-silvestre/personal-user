@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClient, User as PrismaUser } from '@prisma/client';
 
 import type { IUser } from '@users/domain/entity/user.interface';
-import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
+import type { IDatabaseAdapter } from '../Database.adapter.interface';
 
 import { User } from '@users/domain/entity/User';
 import { UserFactory } from '@users/domain/factory/User.factory';
 
 @Injectable()
-export class UserDatabasePrismaAdapter implements IUserDatabaseAdapter {
+export class UserDatabasePrismaAdapter implements IDatabaseAdapter {
   private readonly client: PrismaClient;
 
   constructor() {

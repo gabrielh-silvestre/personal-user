@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { IUser } from '@users/domain/entity/user.interface';
-import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 import type { InputCreateUserDto, OutputCreateUserDto } from './CreateUser.dto';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
@@ -14,7 +14,7 @@ import { MAIL_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 export class CreateUserUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
-    private readonly databaseGateway: IDataBaseGateway,
+    private readonly databaseGateway: IDatabaseGateway,
     @Inject(MAIL_GATEWAY) private readonly mailGateway: IMailGateway,
   ) {}
 

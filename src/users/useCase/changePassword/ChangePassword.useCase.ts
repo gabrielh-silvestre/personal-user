@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { InputChangePasswordDto } from './ChangePassword.dto';
-import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { User } from '@users/domain/entity/User';
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
@@ -14,7 +14,7 @@ import { DATABASE_GATEWAY } from '@users/utils/constants';
 export class ChangePasswordUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
-    private readonly databaseGateway: IDataBaseGateway,
+    private readonly databaseGateway: IDatabaseGateway,
   ) {}
 
   private passwordMatch(

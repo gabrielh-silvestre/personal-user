@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
+import type { IDatabaseAdapter } from '../Database.adapter.interface';
 import type { IUser } from '@users/domain/entity/user.interface';
 
 import { User } from '@users/domain/entity/User';
 
 @Injectable()
-export class UserDatabaseMemoryAdapter implements IUserDatabaseAdapter {
+export class UserDatabaseMemoryAdapter implements IDatabaseAdapter {
   private static readonly USERS: User[] = [];
 
   async findAll(): Promise<User[]> {

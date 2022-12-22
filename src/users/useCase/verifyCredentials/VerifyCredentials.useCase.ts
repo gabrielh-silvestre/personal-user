@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { IUser } from '@users/domain/entity/user.interface';
-import type { IDataBaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
+import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 import type {
   InputVerifyCredentialsDto,
   OutputVerifyCredentialsDto,
@@ -15,7 +15,7 @@ import { DATABASE_GATEWAY } from '@users/utils/constants';
 export class VerifyCredentialsUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
-    private readonly databaseGateway: IDataBaseGateway,
+    private readonly databaseGateway: IDatabaseGateway,
   ) {}
 
   private async foundUserByEmail(email: string): Promise<IUser | never> {

@@ -1,13 +1,13 @@
-import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
+import type { IDatabaseAdapter } from '../Database.adapter.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { UserDatabaseMemoryAdapter } from './UserMemory.adapter';
+import { UserDatabaseMemoryAdapter } from './DatabaseMemory.adapter';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Unit test infra UserMemory gateway', () => {
-  let userGateway: IUserDatabaseAdapter;
+  let userGateway: IDatabaseAdapter;
 
   beforeEach(() => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);

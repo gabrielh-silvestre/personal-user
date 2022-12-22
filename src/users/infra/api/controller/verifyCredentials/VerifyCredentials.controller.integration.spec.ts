@@ -4,7 +4,7 @@ import { VerifyCredentialsController } from './VerifyCredentials.controller';
 import { VerifyCredentialsUseCase } from '@users/useCase/verifyCredentials/VerifyCredentials.useCase';
 
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
-import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 

@@ -7,15 +7,14 @@ export interface InputMailPresenterDto {
 }
 
 export interface OutputMailPresenterDto {
-  to: string;
-  subject: string;
   text?: string;
   html: string;
 }
 
 export interface IMailPresenter {
   present(
-    dto: InputMailPresenterDto,
+    emailTemplate: string,
+    dto: InputMailPresenterDto & { [key: string]: any },
   ):
     | Promise<OutputMailPresenterDto>
     | Observable<OutputMailPresenterDto>

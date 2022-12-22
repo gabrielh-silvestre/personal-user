@@ -13,7 +13,7 @@ import type { IUserRepository } from '@users/domain/repository/user.repository.i
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 import { AuthGateway } from '@users/infra/gateway/auth/Auth.gateway';
@@ -55,7 +55,7 @@ describe('Integration test for RecoverPassword use case', () => {
 
   beforeEach(() => {
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseGateway);
+    userRepository = new DatabaseGateway(userDatabaseGateway);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 

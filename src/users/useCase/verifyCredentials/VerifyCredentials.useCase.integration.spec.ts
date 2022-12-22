@@ -2,7 +2,7 @@ import type { IUserRepository } from '@users/domain/repository/user.repository.i
 import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 import { VerifyCredentialsUseCase } from './VerifyCredentials.useCase';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -19,7 +19,7 @@ describe('Integration tests for Verify Credentials use case', () => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     userDatabaseAdapter = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseAdapter);
+    userRepository = new DatabaseGateway(userDatabaseAdapter);
 
     verifyCredentialsUseCase = new VerifyCredentialsUseCase(userRepository);
   });

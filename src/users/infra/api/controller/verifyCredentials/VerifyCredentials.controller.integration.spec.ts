@@ -3,13 +3,16 @@ import { Test } from '@nestjs/testing';
 import { VerifyCredentialsController } from './VerifyCredentials.controller';
 import { VerifyCredentialsUseCase } from '@users/useCase/verifyCredentials/VerifyCredentials.useCase';
 
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { USER_DATABASE_ADAPTER, USER_REPOSITORY } from '@users/utils/constants';
+import {
+  USER_DATABASE_ADAPTER,
+  DATABASE_GATEWAY,
+} from '@users/utils/constants';
 
 const [{ email }] = USERS_MOCK;
 
@@ -24,8 +27,8 @@ describe('Integration tests for Verify Credentials controller', () => {
       providers: [
         VerifyCredentialsUseCase,
         {
-          provide: USER_REPOSITORY,
-          useClass: UserRepository,
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
         {
           provide: USER_DATABASE_ADAPTER,

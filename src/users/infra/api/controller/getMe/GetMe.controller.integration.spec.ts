@@ -8,13 +8,13 @@ import { GetMeController } from './GetMe.controller';
 import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
   USER_DATABASE_ADAPTER,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 describe('Integration tests for Get Me controller', () => {
@@ -29,8 +29,8 @@ describe('Integration tests for Get Me controller', () => {
       providers: [
         GetMeUseCase,
         {
-          provide: USER_REPOSITORY,
-          useClass: UserRepository,
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
         {
           provide: USER_DATABASE_ADAPTER,

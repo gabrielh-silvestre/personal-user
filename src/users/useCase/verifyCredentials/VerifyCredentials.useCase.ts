@@ -9,12 +9,12 @@ import type {
 
 import { ExceptionFactory } from '@shared/modules/exceptions/factory/Exception.factory';
 
-import { USER_REPOSITORY } from '@users/utils/constants';
+import { DATABASE_GATEWAY } from '@users/utils/constants';
 
 @Injectable()
 export class VerifyCredentialsUseCase {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
   ) {}
 
   private async foundUserByEmail(email: string): Promise<IUser | never> {

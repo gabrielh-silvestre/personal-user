@@ -5,12 +5,12 @@ import type { IUserRepository } from '@users/domain/repository/user.repository.i
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
-import { USER_REPOSITORY } from '@users/utils/constants';
+import { DATABASE_GATEWAY } from '@users/utils/constants';
 
 @Injectable()
 export class GetMeUseCase {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
   ) {}
 
   async execute(id: string): Promise<OutputGetMeDto | never> {

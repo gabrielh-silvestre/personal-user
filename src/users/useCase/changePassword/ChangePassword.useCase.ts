@@ -8,12 +8,12 @@ import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 import { ExceptionFactory } from '@shared/modules/exceptions/factory/Exception.factory';
 
-import { USER_REPOSITORY } from '@users/utils/constants';
+import { DATABASE_GATEWAY } from '@users/utils/constants';
 
 @Injectable()
 export class ChangePasswordUseCase {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
   ) {}
 
   private passwordMatch(

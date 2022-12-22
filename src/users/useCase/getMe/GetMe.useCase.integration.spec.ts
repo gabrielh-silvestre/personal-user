@@ -3,13 +3,13 @@ import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDat
 import { GetMeUseCase } from './GetMe.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration tests for Get User by id use case', () => {
   let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: UserRepository;
+  let userRepository: DatabaseGateway;
 
   let getMeUseCase: GetMeUseCase;
 
@@ -17,7 +17,7 @@ describe('Integration tests for Get User by id use case', () => {
     UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseGateway);
+    userRepository = new DatabaseGateway(userDatabaseGateway);
 
     getMeUseCase = new GetMeUseCase(userRepository);
   });

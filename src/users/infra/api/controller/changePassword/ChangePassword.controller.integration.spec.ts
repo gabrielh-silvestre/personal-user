@@ -4,7 +4,7 @@ import { Test } from '@nestjs/testing';
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassword.useCase';
 import { ChangePasswordController } from './ChangePassword.controller';
@@ -13,7 +13,7 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
   USER_DATABASE_ADAPTER,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 const [{ id, password: oldPassword }] = USERS_MOCK;
@@ -39,8 +39,8 @@ describe('Integration test for ChangePassword controller', () => {
           useClass: UserDatabaseMemoryAdapter,
         },
         {
-          provide: USER_REPOSITORY,
-          useClass: UserRepository,
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
         {
           provide: AUTH_GATEWAY,
@@ -51,7 +51,7 @@ describe('Integration test for ChangePassword controller', () => {
       ],
     }).compile();
 
-    userRepository = module.get<IUserRepository>(USER_REPOSITORY);
+    userRepository = module.get<IUserRepository>(DATABASE_GATEWAY);
     changePasswordController = module.get<ChangePasswordController>(
       ChangePasswordController,
     );

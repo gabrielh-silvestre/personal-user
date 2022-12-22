@@ -4,13 +4,13 @@ import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   MAIL_GATEWAY,
   USER_DATABASE_ADAPTER,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 const VALID_NEW_USER = {
@@ -42,8 +42,8 @@ describe('Integration test for Create User controller', () => {
           useClass: UserDatabaseMemoryAdapter,
         },
         {
-          provide: USER_REPOSITORY,
-          useClass: UserRepository,
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
       ],
     }).compile();

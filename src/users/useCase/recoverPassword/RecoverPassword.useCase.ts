@@ -11,13 +11,13 @@ import { ExceptionFactory } from '@shared/modules/exceptions/factory/Exception.f
 import {
   AUTH_GATEWAY,
   MAIL_GATEWAY,
-  USER_REPOSITORY,
+  DATABASE_GATEWAY,
 } from '@users/utils/constants';
 
 @Injectable()
 export class RecoverPasswordUseCase {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
     @Inject(AUTH_GATEWAY) private readonly authGateway: IAuthGateway,
     @Inject(MAIL_GATEWAY) private readonly mailGateway: IMailGateway,
   ) {}

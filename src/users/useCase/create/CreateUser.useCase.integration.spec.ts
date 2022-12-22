@@ -6,7 +6,7 @@ import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDat
 import { CreateUserUseCase } from './CreateUser.useCase';
 
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
-import { UserRepository } from '@users/infra/repository/User.repository';
+import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 
@@ -32,7 +32,7 @@ describe('Integration test for Create User use case', () => {
   UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
   let userDatabaseGateway: IUserDatabaseAdapter;
-  let userRepository: UserRepository;
+  let userRepository: DatabaseGateway;
 
   const mailAdapter: IMailAdapter = {
     send: jest.fn(),
@@ -48,7 +48,7 @@ describe('Integration test for Create User use case', () => {
 
   beforeEach(() => {
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
-    userRepository = new UserRepository(userDatabaseGateway);
+    userRepository = new DatabaseGateway(userDatabaseGateway);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 

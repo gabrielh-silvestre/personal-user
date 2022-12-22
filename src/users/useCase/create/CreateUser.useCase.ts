@@ -8,12 +8,12 @@ import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interf
 import { UserFactory } from '@users/domain/factory/User.factory';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
-import { MAIL_GATEWAY, USER_REPOSITORY } from '@users/utils/constants';
+import { MAIL_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 @Injectable()
 export class CreateUserUseCase {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(DATABASE_GATEWAY) private readonly userRepository: IUserRepository,
     @Inject(MAIL_GATEWAY) private readonly mailGateway: IMailGateway,
   ) {}
 

@@ -1,14 +1,11 @@
-import { Module } from '@nestjs/common/decorators';
-// import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';
 
-// import { AuthModule } from '@auth/auth.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
 import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserPrisma.adapter';
 import { UserRepository } from './infra/repository/User.repository';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
-import { CreateUserMailPresenter } from './infra/presenter/mail/create/CreateUser.mail.presenter';
 import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
 
 import { VerifyCredentialsController } from './infra/api/controller/verifyCredentials/VerifyCredentials.controller';
@@ -27,6 +24,7 @@ import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
+import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
 import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
@@ -70,7 +68,7 @@ import {
     },
     {
       provide: MAIL_PRESENTER,
-      useClass: CreateUserMailPresenter,
+      useClass: MailPresenter,
     },
     {
       provide: AUTH_ADAPTER,

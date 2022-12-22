@@ -20,43 +20,26 @@ export class MailGateway implements IMailGateway {
     @Inject(MAIL_PRESENTER) private readonly mailPresenter: IMailPresenter,
   ) {}
 
-  private recoverPasswordMailData({
+  async welcomeMail({ email, username }: InputDeliveryInfo): Promise<void> {
+    const { html } = (await this.mailPresenter.present('WelcomeMail', {
+      email,
+      username,
+    })) as OutputMailPresenterDto;
+
+    this.mailAdapter.send(email, 'Welcome to S1 Auth', { text: '', html });
+  }
+
+  async recoverPasswordMail({
     email,
     username,
     token,
-  }: InputRecoverPasswordInfo) {
-    return {
-      to: email,
-      subject: 'Recover password',
-      text: `Hi, ${username}! Use this token to recover your password: ${token}`,
-      html: `<b>Hi, ${username}! Use this token to recover your password: ${token}</b>`,
-    };
-  }
-
-  private async presentMailData(
-    email: string,
-    username: string,
-    token?: string,
-  ): Promise<OutputMailPresenterDto> {
-    return this.mailPresenter.present({
-      username,
+  }: InputRecoverPasswordInfo): Promise<void> {
+    const { html } = (await this.mailPresenter.present('RecoverPasswordMail', {
       email,
+      username,
       token,
-    }) as Promise<OutputMailPresenterDto>;
-  }
+    })) as OutputMailPresenterDto;
 
-  async welcomeMail(data: InputDeliveryInfo): Promise<void> {
-    const { to, subject, html } = await this.presentMailData(
-      data.email,
-      data.username,
-    );
-
-    this.mailAdapter.send(to, subject, { text: '', html });
-  }
-
-  async recoverPasswordMail(data: InputRecoverPasswordInfo): Promise<void> {
-    const { to, subject, text, html } = this.recoverPasswordMailData(data);
-
-    this.mailAdapter.send(to, subject, { text, html });
+    this.mailAdapter.send(email, 'Recover your password', { text: '', html });
   }
 }

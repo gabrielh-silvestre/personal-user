@@ -1,9 +1,12 @@
 import { from } from 'rxjs';
 
 import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
+import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
+
 import type { IAuthAdapter } from '@users/infra/adapter/auth/Auth.adapter.interface';
 import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
+
 import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 
@@ -23,7 +26,12 @@ describe('Integration test for RecoverPassword use case', () => {
   let userDatabaseGateway: IUserDatabaseAdapter;
   let userRepository: IUserRepository;
 
-  let mailAdapter: IMailAdapter;
+  const mailAdapter: IMailAdapter = {
+    send: jest.fn(),
+  };
+  const mailPresenter: IMailPresenter = {
+    present: jest.fn().mockResolvedValue({ html: '' }),
+  };
   let mailGateway: IMailGateway;
 
   let authAdapter: IAuthAdapter;
@@ -49,8 +57,7 @@ describe('Integration test for RecoverPassword use case', () => {
     userDatabaseGateway = new UserDatabaseMemoryAdapter();
     userRepository = new UserRepository(userDatabaseGateway);
 
-    mailAdapter = { send: jest.fn() };
-    mailGateway = new MailGateway(mailAdapter);
+    mailGateway = new MailGateway(mailAdapter, mailPresenter);
 
     authAdapter = {
       verify: jest.fn(),

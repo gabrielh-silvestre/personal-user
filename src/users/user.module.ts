@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
-import { DatabasePrismaAdapter } from './infra/adapter/database/prisma/DatabasePrisma.adapter';
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
@@ -26,6 +25,7 @@ import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
+import { OrmPrismaAdapter } from './infra/adapter/orm/prisma/OrmPrisma.adapter';
 import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
 
 import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
@@ -38,9 +38,9 @@ import {
   MAIL_PRESENTER,
   MAIL_QUEUE,
   TEMPLATE_ADAPTER,
-  USER_DATABASE_ADAPTER,
   DATABASE_GATEWAY,
   QUEUE_ADAPTER,
+  ORM_ADAPTER,
 } from './utils/constants';
 
 @Module({
@@ -80,16 +80,16 @@ import {
       useClass: DatabaseGateway,
     },
     {
-      provide: USER_DATABASE_ADAPTER,
-      useClass: DatabasePrismaAdapter,
-    },
-    {
       provide: TEMPLATE_ADAPTER,
       useClass: TemplateEngineEjsAdapter,
     },
     {
       provide: QUEUE_ADAPTER,
       useClass: QueueRmqAdapter,
+    },
+    {
+      provide: ORM_ADAPTER,
+      useClass: OrmPrismaAdapter,
     },
   ],
 })

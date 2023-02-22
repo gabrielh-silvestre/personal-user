@@ -1,24 +1,24 @@
-import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.adapter.interface';
+import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { GetMeUseCase } from './GetMe.useCase';
 
-import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 
 describe('Integration tests for Get User by id use case', () => {
-  let databaseAdapter: IDatabaseAdapter;
+  let ormAdapter: IOrmAdapter;
   let databaseGateway: IDatabaseGateway;
 
   let getMeUseCase: GetMeUseCase;
 
   beforeEach(() => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
 
-    databaseAdapter = new DatabaseMemoryAdapter();
-    databaseGateway = new DatabaseGateway(databaseAdapter);
+    ormAdapter = new OrmMemoryAdapter();
+    databaseGateway = new DatabaseGateway(ormAdapter);
 
     getMeUseCase = new GetMeUseCase(databaseGateway);
   });

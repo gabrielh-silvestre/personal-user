@@ -1,29 +1,28 @@
-import { from } from 'rxjs';
-
 import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
 import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
-import type { IAuthAdapter } from '@users/infra/adapter/auth/Auth.adapter.interface';
+import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
 
-import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.adapter.interface';
+import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
-import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 import { AuthGateway } from '@users/infra/gateway/auth/Auth.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import { from } from 'rxjs';
 
 const [{ id, email, username }] = USERS_MOCK;
 
 describe('Integration test for RecoverPassword use case', () => {
-  let databaseAdapter: IDatabaseAdapter;
+  let ormAdapter: IOrmAdapter;
   let databaseGateway: IDatabaseGateway;
 
   const mailAdapter: IMailAdapter = {
@@ -34,7 +33,7 @@ describe('Integration test for RecoverPassword use case', () => {
   };
   let mailGateway: IMailGateway;
 
-  let authAdapter: IAuthAdapter;
+  let queueAdapter: IQueueAdapter;
   let authGateway: IAuthGateway;
 
   let recoverPasswordUseCase: RecoverPasswordUseCase;
@@ -50,20 +49,20 @@ describe('Integration test for RecoverPassword use case', () => {
   );
 
   beforeAll(() => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
   });
 
   beforeEach(() => {
-    databaseAdapter = new DatabaseMemoryAdapter();
-    databaseGateway = new DatabaseGateway(databaseAdapter);
+    ormAdapter = new OrmMemoryAdapter();
+    databaseGateway = new DatabaseGateway(ormAdapter);
 
     mailGateway = new MailGateway(mailAdapter, mailPresenter);
 
-    authAdapter = {
-      verify: jest.fn(),
-      generate: jest.fn().mockReturnValue(from(['fake-token'])),
+    queueAdapter = {
+      send: jest.fn().mockReturnValue(from('fake-message')),
+      emit: jest.fn(),
     };
-    authGateway = new AuthGateway(authAdapter);
+    authGateway = new AuthGateway(queueAdapter);
 
     recoverPasswordUseCase = new RecoverPasswordUseCase(
       databaseGateway,

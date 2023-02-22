@@ -1,7 +1,7 @@
+import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
-import type { IDatabaseAdapter } from '@users/infra/adapter/database/Database.adapter.interface';
 
-import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 import { VerifyCredentialsUseCase } from './VerifyCredentials.useCase';
 
@@ -10,16 +10,16 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 const [{ email }] = USERS_MOCK;
 
 describe('Integration tests for Verify Credentials use case', () => {
-  let databaseAdapter: IDatabaseAdapter;
+  let ormAdapter: IOrmAdapter;
   let databaseGateway: IDatabaseGateway;
 
   let verifyCredentialsUseCase: VerifyCredentialsUseCase;
 
   beforeEach(() => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
 
-    databaseAdapter = new DatabaseMemoryAdapter();
-    databaseGateway = new DatabaseGateway(databaseAdapter);
+    ormAdapter = new OrmMemoryAdapter();
+    databaseGateway = new DatabaseGateway(ormAdapter);
 
     verifyCredentialsUseCase = new VerifyCredentialsUseCase(databaseGateway);
   });

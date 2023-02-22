@@ -7,14 +7,14 @@ import { GetMeController } from './GetMe.controller';
 
 import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
-import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
-  USER_DATABASE_ADAPTER,
   DATABASE_GATEWAY,
+  ORM_ADAPTER,
 } from '@users/utils/constants';
 
 describe('Integration tests for Get Me controller', () => {
@@ -22,7 +22,7 @@ describe('Integration tests for Get Me controller', () => {
   const [{ id: userId }] = USERS_MOCK;
 
   beforeEach(async () => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [GetMeController],
@@ -33,8 +33,8 @@ describe('Integration tests for Get Me controller', () => {
           useClass: DatabaseGateway,
         },
         {
-          provide: USER_DATABASE_ADAPTER,
-          useClass: DatabaseMemoryAdapter,
+          provide: ORM_ADAPTER,
+          useClass: OrmMemoryAdapter,
         },
         {
           provide: AUTH_GATEWAY,

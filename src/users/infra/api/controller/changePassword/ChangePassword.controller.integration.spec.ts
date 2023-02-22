@@ -1,7 +1,7 @@
 import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 
-import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassword.useCase';
@@ -10,8 +10,8 @@ import { ChangePasswordController } from './ChangePassword.controller';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
-  USER_DATABASE_ADAPTER,
   DATABASE_GATEWAY,
+  ORM_ADAPTER,
 } from '@users/utils/constants';
 
 const [{ id, password: oldPassword }] = USERS_MOCK;
@@ -26,15 +26,15 @@ describe('Integration test for ChangePassword controller', () => {
   let changePasswordController: ChangePasswordController;
 
   beforeEach(async () => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [ChangePasswordController],
       providers: [
         ChangePasswordUseCase,
         {
-          provide: USER_DATABASE_ADAPTER,
-          useClass: DatabaseMemoryAdapter,
+          provide: ORM_ADAPTER,
+          useClass: OrmMemoryAdapter,
         },
         {
           provide: DATABASE_GATEWAY,

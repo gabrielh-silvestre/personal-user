@@ -1,21 +1,21 @@
-import type { IDatabaseAdapter } from '../../adapter/database/Database.adapter.interface';
+import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from './Database.gateway.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { DatabaseMemoryAdapter } from '../../adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from './Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration test infra DatabaseGateway', () => {
-  let databaseAdapter: IDatabaseAdapter;
+  let databaseAdapter: IOrmAdapter;
   let databaseGateway: IDatabaseGateway;
 
   beforeEach(() => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
 
-    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseAdapter = new OrmMemoryAdapter();
     databaseGateway = new DatabaseGateway(databaseAdapter);
   });
 

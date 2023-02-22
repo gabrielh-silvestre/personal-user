@@ -3,16 +3,16 @@ import { Test } from '@nestjs/testing';
 import { RecoverPasswordUseCase } from '@users/useCase/recoverPassword/RecoverPassword.useCase';
 import { RecoverPasswordController } from './RecoverPassword.controller';
 
-import { DatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
   MAIL_GATEWAY,
-  USER_DATABASE_ADAPTER,
   DATABASE_GATEWAY,
+  ORM_ADAPTER,
 } from '@users/utils/constants';
+import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 
 const [{ email }] = USERS_MOCK;
 
@@ -20,15 +20,15 @@ describe('Integration tests for RecoverPassword controller', () => {
   let recoverPasswordController: RecoverPasswordController;
 
   beforeEach(async () => {
-    DatabaseMemoryAdapter.reset(USERS_MOCK);
+    OrmMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [RecoverPasswordController],
       providers: [
         RecoverPasswordUseCase,
         {
-          provide: USER_DATABASE_ADAPTER,
-          useClass: DatabaseMemoryAdapter,
+          provide: ORM_ADAPTER,
+          useClass: OrmMemoryAdapter,
         },
         {
           provide: DATABASE_GATEWAY,

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
-import { DatabasePrismaAdapter } from './infra/adapter/database/prisma/DatabasePrisma.adapter';
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
@@ -20,26 +19,26 @@ import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPasswor
 import { ChangePasswordController } from './infra/api/controller/changePassword/ChangePassword.controller';
 import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.useCase';
 
-import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
-import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
+
+import { OrmPrismaAdapter } from './infra/adapter/orm/prisma/OrmPrisma.adapter';
+import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
 
 import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
 
 import {
-  AUTH_ADAPTER,
   AUTH_GATEWAY,
   AUTH_QUEUE,
-  MAIL_ADAPTER,
   MAIL_GATEWAY,
   MAIL_PRESENTER,
   MAIL_QUEUE,
   TEMPLATE_ADAPTER,
-  USER_DATABASE_ADAPTER,
   DATABASE_GATEWAY,
+  QUEUE_ADAPTER,
+  ORM_ADAPTER,
 } from './utils/constants';
 
 @Module({
@@ -63,16 +62,8 @@ import {
       useClass: MailGateway,
     },
     {
-      provide: MAIL_ADAPTER,
-      useClass: MailRmqAdapter,
-    },
-    {
       provide: MAIL_PRESENTER,
       useClass: MailPresenter,
-    },
-    {
-      provide: AUTH_ADAPTER,
-      useClass: AuthRmqAdapter,
     },
     {
       provide: AUTH_GATEWAY,
@@ -83,12 +74,16 @@ import {
       useClass: DatabaseGateway,
     },
     {
-      provide: USER_DATABASE_ADAPTER,
-      useClass: DatabasePrismaAdapter,
-    },
-    {
       provide: TEMPLATE_ADAPTER,
       useClass: TemplateEngineEjsAdapter,
+    },
+    {
+      provide: QUEUE_ADAPTER,
+      useClass: QueueRmqAdapter,
+    },
+    {
+      provide: ORM_ADAPTER,
+      useClass: OrmPrismaAdapter,
     },
   ],
 })

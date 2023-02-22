@@ -21,7 +21,6 @@ import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.u
 
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
-import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
@@ -33,7 +32,6 @@ import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateE
 import {
   AUTH_GATEWAY,
   AUTH_QUEUE,
-  MAIL_ADAPTER,
   MAIL_GATEWAY,
   MAIL_PRESENTER,
   MAIL_QUEUE,
@@ -62,10 +60,6 @@ import {
     {
       provide: MAIL_GATEWAY,
       useClass: MailGateway,
-    },
-    {
-      provide: MAIL_ADAPTER,
-      useClass: MailRmqAdapter,
     },
     {
       provide: MAIL_PRESENTER,

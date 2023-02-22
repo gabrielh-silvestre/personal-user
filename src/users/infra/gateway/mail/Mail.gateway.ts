@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
+import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 import type {
   IMailPresenter,
   OutputMailPresenterDto,
@@ -11,12 +11,12 @@ import type {
   InputRecoverPasswordInfo,
 } from './mail.gateway.interface';
 
-import { MAIL_ADAPTER, MAIL_PRESENTER } from '@users/utils/constants';
+import { MAIL_PRESENTER, QUEUE_ADAPTER } from '@users/utils/constants';
 
 @Injectable()
 export class MailGateway implements IMailGateway {
   constructor(
-    @Inject(MAIL_ADAPTER) private readonly mailAdapter: IMailAdapter,
+    @Inject(QUEUE_ADAPTER) private readonly queueAdapter: IQueueAdapter,
     @Inject(MAIL_PRESENTER) private readonly mailPresenter: IMailPresenter,
   ) {}
 
@@ -26,7 +26,12 @@ export class MailGateway implements IMailGateway {
       username,
     })) as OutputMailPresenterDto;
 
-    this.mailAdapter.send(email, 'Welcome to S1 Auth', { text: '', html });
+    this.queueAdapter.emit('mail.send', {
+      to: email,
+      subject: 'Welcome to S1 Auth',
+      text: '',
+      html,
+    });
   }
 
   async recoverPasswordMail({
@@ -40,6 +45,11 @@ export class MailGateway implements IMailGateway {
       token,
     })) as OutputMailPresenterDto;
 
-    this.mailAdapter.send(email, 'Recover your password', { text: '', html });
+    this.queueAdapter.emit('mail.send', {
+      to: email,
+      subject: 'Recover your password',
+      text: '',
+      html,
+    });
   }
 }

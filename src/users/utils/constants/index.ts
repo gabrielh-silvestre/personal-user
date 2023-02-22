@@ -1,4 +1,3 @@
-export const MAIL_ADAPTER = 'MAIL_ADAPTER';
 export const MAIL_GATEWAY = 'MAIL_GATEWAY';
 export const MAIL_PRESENTER = 'MAIL_PRESENTER';
 export const MAIL_QUEUE = 'MAIL';

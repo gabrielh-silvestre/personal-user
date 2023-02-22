@@ -1,4 +1,3 @@
-import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
 import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
@@ -25,9 +24,6 @@ describe('Integration test for RecoverPassword use case', () => {
   let ormAdapter: IOrmAdapter;
   let databaseGateway: IDatabaseGateway;
 
-  const mailAdapter: IMailAdapter = {
-    send: jest.fn(),
-  };
   const mailPresenter: IMailPresenter = {
     present: jest.fn().mockResolvedValue({ html: '' }),
   };
@@ -54,14 +50,14 @@ describe('Integration test for RecoverPassword use case', () => {
 
   beforeEach(() => {
     ormAdapter = new OrmMemoryAdapter();
-    databaseGateway = new DatabaseGateway(ormAdapter);
-
-    mailGateway = new MailGateway(mailAdapter, mailPresenter);
-
     queueAdapter = {
       send: jest.fn().mockReturnValue(from('fake-message')),
       emit: jest.fn(),
     };
+
+    databaseGateway = new DatabaseGateway(ormAdapter);
+
+    mailGateway = new MailGateway(queueAdapter, mailPresenter);
     authGateway = new AuthGateway(queueAdapter);
 
     recoverPasswordUseCase = new RecoverPasswordUseCase(

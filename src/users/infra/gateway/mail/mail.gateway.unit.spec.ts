@@ -1,6 +1,6 @@
-import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
-import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
+import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 import type { IMailGateway } from './mail.gateway.interface';
+import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 
 import { MailGateway } from './Mail.gateway';
 
@@ -13,18 +13,22 @@ describe('Unit test for Mail service', () => {
   const mailPresenter: IMailPresenter = {
     present: jest.fn().mockResolvedValue({ html: '' }),
   };
-  const mailAdapter: IMailAdapter = {
+  const queueAdapter: IQueueAdapter = {
     send: jest.fn(),
+    emit: jest.fn(),
   };
 
   beforeEach(() => {
-    mailGateway = new MailGateway(mailAdapter, mailPresenter);
+    mailGateway = new MailGateway(queueAdapter, mailPresenter);
   });
 
   it('should send a welcome mail', async () => {
     await mailGateway.welcomeMail({ email, username });
 
-    expect(mailAdapter.send).toBeCalledWith(email, expect.any(String), {
+    expect(queueAdapter.emit).toBeCalledTimes(1);
+    expect(queueAdapter.emit).toBeCalledWith('mail.send', {
+      to: email,
+      subject: 'Welcome to S1 Auth',
       text: expect.any(String),
       html: expect.any(String),
     });

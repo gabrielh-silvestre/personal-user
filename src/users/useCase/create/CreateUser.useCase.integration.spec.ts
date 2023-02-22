@@ -1,9 +1,10 @@
-import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
 import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
 import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
+
+import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
@@ -33,12 +34,11 @@ const INVALID_NEW_USER = {
 describe('Integration test for Create User use case', () => {
   OrmMemoryAdapter.reset(USERS_MOCK);
 
+  let queueAdapter: IQueueAdapter;
   let ormAdapter: IOrmAdapter;
+
   let databaseGateway: IDatabaseGateway;
 
-  const mailAdapter: IMailAdapter = {
-    send: jest.fn(),
-  };
   const mailPresenter: IMailPresenter = {
     present: jest.fn().mockResolvedValue({ html: '' }),
   };
@@ -50,9 +50,14 @@ describe('Integration test for Create User use case', () => {
 
   beforeEach(() => {
     ormAdapter = new OrmMemoryAdapter();
+    queueAdapter = {
+      send: jest.fn(),
+      emit: jest.fn(),
+    };
+
     databaseGateway = new DatabaseGateway(ormAdapter);
 
-    mailGateway = new MailGateway(mailAdapter, mailPresenter);
+    mailGateway = new MailGateway(queueAdapter, mailPresenter);
 
     createUserUseCase = new CreateUserUseCase(databaseGateway, mailGateway);
   });

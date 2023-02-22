@@ -20,17 +20,17 @@ import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPasswor
 import { ChangePasswordController } from './infra/api/controller/changePassword/ChangePassword.controller';
 import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.useCase';
 
-import { AuthRmqAdapter } from './infra/adapter/auth/rmq/AuthRmq.adapter';
 import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
+import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
+
 import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
 
 import {
-  AUTH_ADAPTER,
   AUTH_GATEWAY,
   AUTH_QUEUE,
   MAIL_ADAPTER,
@@ -40,6 +40,7 @@ import {
   TEMPLATE_ADAPTER,
   USER_DATABASE_ADAPTER,
   DATABASE_GATEWAY,
+  QUEUE_ADAPTER,
 } from './utils/constants';
 
 @Module({
@@ -71,10 +72,6 @@ import {
       useClass: MailPresenter,
     },
     {
-      provide: AUTH_ADAPTER,
-      useClass: AuthRmqAdapter,
-    },
-    {
       provide: AUTH_GATEWAY,
       useClass: AuthGateway,
     },
@@ -89,6 +86,10 @@ import {
     {
       provide: TEMPLATE_ADAPTER,
       useClass: TemplateEngineEjsAdapter,
+    },
+    {
+      provide: QUEUE_ADAPTER,
+      useClass: QueueRmqAdapter,
     },
   ],
 })

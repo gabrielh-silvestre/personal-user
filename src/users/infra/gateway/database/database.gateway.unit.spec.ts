@@ -5,7 +5,10 @@ import { UserFactory } from '@users/domain/factory/User.factory';
 
 import { DatabaseGateway } from './Database.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import {
+  FAKE_EVENT_DISPATCHER,
+  USERS_MOCK,
+} from '@shared/utils/mocks/users.mock';
 
 const ORM_ADAPTER: IOrmAdapter = {
   create: jest.fn(),
@@ -59,7 +62,13 @@ describe('Unit test infra DatabaseGateway', () => {
   });
 
   it('should create a user', async () => {
-    const newUser = UserFactory.create('Joe', 'joe@email.com', 'password');
+    const newUser = UserFactory.create(
+      FAKE_EVENT_DISPATCHER,
+      'Joe',
+      'joe@email.com',
+      'password',
+    );
+
     await databaseGateway.create(newUser);
 
     expect(ORM_ADAPTER.create).toHaveBeenCalledWith({
@@ -74,7 +83,7 @@ describe('Unit test infra DatabaseGateway', () => {
 
   it('should update a user', async () => {
     const [userToUpdate] = USERS_MOCK;
-    userToUpdate.changeUsername('Johnny');
+    userToUpdate.changeUsername('Johnny', FAKE_EVENT_DISPATCHER);
 
     await databaseGateway.update(userToUpdate);
 

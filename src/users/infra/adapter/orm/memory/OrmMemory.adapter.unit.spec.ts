@@ -1,6 +1,6 @@
-import type { IOrmAdapter } from '../Orm.adapter.interface';
+import { v4 as uuid } from 'uuid';
 
-import { UserFactory } from '@users/domain/factory/User.factory';
+import type { IOrmAdapter, OrmUserDto } from '../Orm.adapter.interface';
 
 import { OrmMemoryAdapter } from './OrmMemory.adapter';
 
@@ -37,16 +37,16 @@ describe('Unit test infra OrmMemoryAdapter', () => {
   });
 
   it('should create a user', async () => {
-    const newUser = UserFactory.create('Joe', 'joe@email.com', 'password');
-    await ormAdapter.create({
-      id: newUser.id,
-      username: newUser.username,
-      email: newUser.email,
-      password: newUser.password.toString(),
-      createdAt: newUser.createdAt,
-      updatedAt: newUser.updatedAt,
-    });
+    const newUser: OrmUserDto = {
+      id: uuid(),
+      username: 'Joe',
+      email: 'joe@email.com',
+      password: 'password',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
+    await ormAdapter.create(newUser);
     const foundUser = await ormAdapter.findOne({ id: newUser.id });
 
     expect(foundUser).not.toBeNull();
@@ -56,18 +56,17 @@ describe('Unit test infra OrmMemoryAdapter', () => {
   });
 
   it('should update a user', async () => {
-    const [userToUpdate] = USERS_MOCK;
-    userToUpdate.changeUsername('Johny');
+    const [user] = USERS_MOCK;
+    const userToUpdate: OrmUserDto = {
+      id: user.id,
+      username: 'Johny',
+      email: user.email,
+      password: user.password.toString(),
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
 
-    await ormAdapter.update({
-      id: userToUpdate.id,
-      username: userToUpdate.username,
-      email: userToUpdate.email,
-      password: userToUpdate.password.toString(),
-      createdAt: userToUpdate.createdAt,
-      updatedAt: userToUpdate.updatedAt,
-    });
-
+    await ormAdapter.update(userToUpdate);
     const foundUser = await ormAdapter.findOne({ id: userToUpdate.id });
 
     expect(foundUser).not.toBeNull();

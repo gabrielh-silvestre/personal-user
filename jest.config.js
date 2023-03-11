@@ -13,4 +13,5 @@ module.exports = {
   coverageDirectory: './coverage',
   testEnvironment: 'node',
   testResultsProcessor: 'jest-sonar-reporter',
+  clearMocks: true,
 };

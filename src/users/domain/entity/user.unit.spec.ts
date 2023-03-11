@@ -3,6 +3,8 @@ import { v4 as uuid } from 'uuid';
 import { User } from './User';
 import { PasswordFactory } from '../factory/Password.factory';
 
+import { FAKE_EVENT_DISPATCHER } from '@shared/utils/mocks/users.mock';
+
 const VALID_USERNAME = 'username';
 const VALID_EMAIL = 'email@email.com';
 
@@ -31,8 +33,10 @@ describe('Unit test domain User entity', () => {
       new Date(),
     );
 
-    user.changeUsername('newUser');
+    user.changeUsername('newUser', FAKE_EVENT_DISPATCHER);
+
     expect(user.username).toBe('newUser');
+    expect(FAKE_EVENT_DISPATCHER.notify).toBeCalledTimes(1);
   });
 
   it('should change email', () => {
@@ -100,13 +104,18 @@ describe('Unit test domain User entity', () => {
       new Date(),
     );
 
-    expect(() => user.changeUsername('u')).toThrowError(
+    const actShortUsername = () =>
+      user.changeUsername('u', FAKE_EVENT_DISPATCHER);
+    const actLongUsername = () =>
+      user.changeUsername(VALID_USERNAME.repeat(20), FAKE_EVENT_DISPATCHER);
+
+    expect(actShortUsername).toThrowError(
       'Username must be at least 3 characters long',
     );
-
-    expect(() => user.changeUsername(VALID_USERNAME.repeat(20))).toThrowError(
+    expect(actLongUsername).toThrowError(
       'Username must be at most 8 characters long',
     );
+    expect(FAKE_EVENT_DISPATCHER.notify).not.toBeCalled();
   });
 
   it('should throw error when change to a invalid email', () => {

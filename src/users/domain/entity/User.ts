@@ -1,7 +1,9 @@
 import type { IUser } from './user.interface';
 import type { IPassword } from '../value-object/Password/password.interface';
+import type { IEventDispatcher } from '@shared/domain/event/event.dispatcher.interface';
 
 import { UserValidatorFactory } from '../factory/User.validator.factory';
+import { UserEventFactory } from '../factory/User.event.factory';
 
 export class User implements IUser {
   private _id: string;
@@ -31,11 +33,16 @@ export class User implements IUser {
     UserValidatorFactory.create().validate(this);
   }
 
-  changeUsername(username: string): void {
+  changeUsername(
+    username: string,
+    eventDispatcher: IEventDispatcher<IUser>,
+  ): void {
     this._username = username;
     this._updatedAt = new Date();
 
     this.validate();
+
+    eventDispatcher.notify(UserEventFactory.usernameChanged(this));
   }
 
   changeEmail(email: string): void {

@@ -1,10 +1,13 @@
 import type { IEvent } from '@shared/domain/event/event.interface';
 import type { IUser } from '../entity/user.interface';
 
-export class UserUpdateUsernameEvent implements IEvent<IUser> {
+export class UserChangedPasswordEvent implements IEvent<IUser> {
   private readonly _id: string;
-  private readonly _name: string = 'UserUpdateUsername';
+
+  private readonly _name: string = 'UserChangedPassword';
+
   private readonly _payload: IUser;
+
   private readonly _occurredAt: Date = new Date();
 
   constructor(id: string, payload: IUser) {

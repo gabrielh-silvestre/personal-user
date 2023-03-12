@@ -13,7 +13,15 @@ describe('Test Domain UserEventFactory', () => {
     const userUpdateUsernameEvent = UserEventFactory.usernameChanged({} as any);
 
     expect(userUpdateUsernameEvent).toBeDefined();
-    expect(userUpdateUsernameEvent.name).toBe('UserUpdateUsername');
+    expect(userUpdateUsernameEvent.name).toBe('UserUpdatedUsername');
     expect(userUpdateUsernameEvent.occurredAt).toBeInstanceOf(Date);
+  });
+
+  it('should create a user change password event', () => {
+    const userChangePasswordEvent = UserEventFactory.changedPassword({} as any);
+
+    expect(userChangePasswordEvent).toBeDefined();
+    expect(userChangePasswordEvent.name).toBe('UserChangedPassword');
+    expect(userChangePasswordEvent.occurredAt).toBeInstanceOf(Date);
   });
 });

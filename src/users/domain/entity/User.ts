@@ -17,12 +17,14 @@ export class User implements IUser {
     id: string,
     username: string,
     email: string,
+    password: IPassword,
     createdAt: Date,
     updatedAt: Date,
   ) {
     this._id = id;
     this._username = username;
     this._email = email;
+    this._password = password;
     this._updatedAt = updatedAt;
     this._createdAt = createdAt;
 
@@ -52,11 +54,16 @@ export class User implements IUser {
     this.validate();
   }
 
-  changePassword(password: IPassword): void {
+  changePassword(
+    password: IPassword,
+    eventDispatcher: IEventDispatcher<IUser>,
+  ): void {
     this._password = password;
     this._updatedAt = new Date();
 
     this.validate();
+
+    eventDispatcher.notify(UserEventFactory.changedPassword(this));
   }
 
   get id(): string {

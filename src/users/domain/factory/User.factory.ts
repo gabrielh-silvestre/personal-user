@@ -15,8 +15,14 @@ export class UserFactory {
     email: string,
     password: string,
   ): User {
-    const newUser = new User(uuid(), username, email, new Date(), new Date());
-    newUser.changePassword(PasswordFactory.createNew(password));
+    const newUser = new User(
+      uuid(),
+      username,
+      email,
+      PasswordFactory.createNew(password),
+      new Date(),
+      new Date(),
+    );
 
     eventDispatcher.notify(UserEventFactory.created(newUser));
 
@@ -31,8 +37,14 @@ export class UserFactory {
     updatedAt: Date,
     password: string,
   ): User {
-    const newUser = new User(id, username, email, createdAt, updatedAt);
-    newUser.changePassword(PasswordFactory.createFromHash(password));
+    const newUser = new User(
+      id,
+      username,
+      email,
+      PasswordFactory.createFromHash(password),
+      createdAt,
+      updatedAt,
+    );
 
     return newUser;
   }

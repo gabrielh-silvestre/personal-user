@@ -7,6 +7,7 @@ import { FAKE_EVENT_DISPATCHER } from '@shared/utils/mocks/users.mock';
 
 const VALID_USERNAME = 'username';
 const VALID_EMAIL = 'email@email.com';
+const VALID_PASSWORD = 'password';
 
 describe('Unit test domain User entity', () => {
   it('should create a new user', () => {
@@ -14,6 +15,7 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
@@ -29,6 +31,7 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
@@ -44,6 +47,7 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
@@ -57,24 +61,45 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
 
-    user.changePassword(PasswordFactory.createNew('newPassword'));
+    user.changePassword(
+      PasswordFactory.createNew('newPassword'),
+      FAKE_EVENT_DISPATCHER,
+    );
+
     expect(user.password.isEqual('newPassword')).toBeTruthy();
+    expect(FAKE_EVENT_DISPATCHER.notify).toBeCalledTimes(1);
   });
 
   it('should throw error when id is invalid', () => {
     expect(
       () =>
-        new User('invalidId', VALID_USERNAME, 'email', new Date(), new Date()),
+        new User(
+          'invalidId',
+          VALID_USERNAME,
+          'email',
+          PasswordFactory.createNew(VALID_PASSWORD),
+          new Date(),
+          new Date(),
+        ),
     ).toThrowError('Id must be a valid UUID v4');
   });
 
   it('should throw error when username is invalid', () => {
     expect(
-      () => new User(uuid(), 'u', VALID_EMAIL, new Date(), new Date()),
+      () =>
+        new User(
+          uuid(),
+          'u',
+          VALID_EMAIL,
+          PasswordFactory.createNew(VALID_PASSWORD),
+          new Date(),
+          new Date(),
+        ),
     ).toThrowError('Username must be at least 3 characters long');
 
     expect(
@@ -83,6 +108,7 @@ describe('Unit test domain User entity', () => {
           uuid(),
           VALID_USERNAME.repeat(20),
           'email',
+          PasswordFactory.createNew(VALID_PASSWORD),
           new Date(),
           new Date(),
         ),
@@ -91,7 +117,15 @@ describe('Unit test domain User entity', () => {
 
   it('should throw error when email is invalid', () => {
     expect(
-      () => new User(uuid(), VALID_USERNAME, 'email', new Date(), new Date()),
+      () =>
+        new User(
+          uuid(),
+          VALID_USERNAME,
+          'email',
+          PasswordFactory.createNew(VALID_PASSWORD),
+          new Date(),
+          new Date(),
+        ),
     ).toThrowError('Email must be a valid email address');
   });
 
@@ -100,6 +134,7 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
@@ -123,6 +158,7 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
@@ -137,20 +173,27 @@ describe('Unit test domain User entity', () => {
       uuid(),
       VALID_USERNAME,
       VALID_EMAIL,
+      PasswordFactory.createNew(VALID_PASSWORD),
       new Date(),
       new Date(),
     );
 
     expect(() =>
-      user.changePassword(PasswordFactory.createNew('')),
+      user.changePassword(PasswordFactory.createNew(''), FAKE_EVENT_DISPATCHER),
     ).toThrowError('Password is required');
 
     expect(() =>
-      user.changePassword(PasswordFactory.createNew('p')),
+      user.changePassword(
+        PasswordFactory.createNew('p'),
+        FAKE_EVENT_DISPATCHER,
+      ),
     ).toThrowError('Password must be at least 8 characters long');
 
     expect(() =>
-      user.changePassword(PasswordFactory.createNew('password'.repeat(20))),
+      user.changePassword(
+        PasswordFactory.createNew('password'.repeat(20)),
+        FAKE_EVENT_DISPATCHER,
+      ),
     ).toThrowError('Password must be at most 16 characters long');
   });
 
@@ -161,6 +204,7 @@ describe('Unit test domain User entity', () => {
           uuid(),
           VALID_USERNAME,
           VALID_EMAIL,
+          PasswordFactory.createNew(VALID_PASSWORD),
           new Date('invalid'),
           new Date(),
         ),
@@ -174,6 +218,7 @@ describe('Unit test domain User entity', () => {
           uuid(),
           VALID_USERNAME,
           VALID_EMAIL,
+          PasswordFactory.createNew(VALID_PASSWORD),
           new Date(),
           new Date('invalid'),
         ),

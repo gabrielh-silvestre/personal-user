@@ -18,7 +18,7 @@ async function bootstrap() {
   const userRmqService = app.get<RmqService>(RmqService);
 
   app.connectMicroservice<MicroserviceOptions>(
-    userRmqService.getOptions('USER'),
+    userRmqService.getOptions('AUTH'),
   );
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,

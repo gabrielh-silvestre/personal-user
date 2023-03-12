@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 
 import type { IQueueAdapter } from '../Queue.adapter.interface';
 
-import { AUTH_QUEUE } from '@users/utils/constants';
+import { USER_QUEUE } from '@users/utils/constants';
 
 @Injectable()
 export class QueueRmqAdapter implements IQueueAdapter {
-  constructor(@Inject(AUTH_QUEUE) private readonly client: ClientProxy) {}
+  constructor(@Inject(USER_QUEUE) private readonly client: ClientProxy) {}
 
   send<T>(event: string, data: any): Observable<T> {
     return this.client.send(event, data);

@@ -5,7 +5,6 @@ export const USER_QUEUE = 'USER';
 
 export const DATABASE_GATEWAY = 'DATABASE_GATEWAY';
 
-export const TEMPLATE_ADAPTER = 'TEMPLATE_ADAPTER';
 export const QUEUE_ADAPTER = 'QUEUE_ADAPTER';
 export const ORM_ADAPTER = 'ORM_ADAPTER';
 

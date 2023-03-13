@@ -1,20 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { InputChangePasswordDto } from './ChangePassword.dto';
+import type { IUser } from '@users/domain/entity/user.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
+import type { InputChangePasswordDto } from './ChangePassword.dto';
+import type { IEventDispatcher } from '@shared/domain/event/event.dispatcher.interface';
 
 import { User } from '@users/domain/entity/User';
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 import { ExceptionFactory } from '@shared/modules/exceptions/factory/Exception.factory';
 
-import { DATABASE_GATEWAY } from '@users/utils/constants';
+import { DATABASE_GATEWAY, EVENT_DISPATCHER } from '@users/utils/constants';
 
 @Injectable()
 export class ChangePasswordUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
     private readonly databaseGateway: IDatabaseGateway,
+    @Inject(EVENT_DISPATCHER)
+    private readonly eventDispatcher: IEventDispatcher<IUser>,
   ) {}
 
   private passwordMatch(
@@ -45,7 +49,10 @@ export class ChangePasswordUseCase {
 
     const user = await this.findUser(id);
 
-    user.changePassword(PasswordFactory.createNew(newPassword));
+    user.changePassword(
+      PasswordFactory.createNew(newPassword),
+      this.eventDispatcher,
+    );
 
     await this.databaseGateway.update(user);
   }

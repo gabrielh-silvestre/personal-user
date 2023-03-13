@@ -1,19 +1,15 @@
-import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
-import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
-
 import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
-
-import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
 import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
-import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
-
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import {
+  FAKE_EVENT_DISPATCHER,
+  USERS_MOCK,
+} from '@shared/utils/mocks/users.mock';
 
 const VALID_NEW_USER = {
   username: 'Joe',
@@ -34,36 +30,21 @@ const INVALID_NEW_USER = {
 describe('Integration test for Create User use case', () => {
   OrmMemoryAdapter.reset(USERS_MOCK);
 
-  let queueAdapter: IQueueAdapter;
   let ormAdapter: IOrmAdapter;
 
   let databaseGateway: IDatabaseGateway;
 
-  const mailPresenter: IMailPresenter = {
-    present: jest.fn().mockResolvedValue({ html: '' }),
-  };
-  let mailGateway: IMailGateway;
-
   let createUserUseCase: CreateUserUseCase;
-
-  const spyWelcomeMail = jest.spyOn(MailGateway.prototype, 'welcomeMail');
 
   beforeEach(() => {
     ormAdapter = new OrmMemoryAdapter();
-    queueAdapter = {
-      send: jest.fn(),
-      emit: jest.fn(),
-    };
 
     databaseGateway = new DatabaseGateway(ormAdapter);
 
-    mailGateway = new MailGateway(queueAdapter, mailPresenter);
-
-    createUserUseCase = new CreateUserUseCase(databaseGateway, mailGateway);
-  });
-
-  afterEach(() => {
-    spyWelcomeMail.mockClear();
+    createUserUseCase = new CreateUserUseCase(
+      databaseGateway,
+      FAKE_EVENT_DISPATCHER,
+    );
   });
 
   it('should create a user with success', async () => {
@@ -78,7 +59,7 @@ describe('Integration test for Create User use case', () => {
       created: expect.any(Date),
     });
 
-    expect(spyWelcomeMail).toBeCalledTimes(1);
+    expect(FAKE_EVENT_DISPATCHER.notify).toBeCalledTimes(1);
   });
 
   it('should throw an error if email is already registered', async () => {
@@ -86,7 +67,7 @@ describe('Integration test for Create User use case', () => {
       'Email already registered',
     );
 
-    expect(spyWelcomeMail).not.toBeCalled();
+    expect(FAKE_EVENT_DISPATCHER.notify).not.toBeCalled();
   });
 
   it('should throw and error if credentials not match', async () => {
@@ -97,7 +78,7 @@ describe('Integration test for Create User use case', () => {
       }),
     ).rejects.toThrow('Credentials not match');
 
-    expect(spyWelcomeMail).not.toBeCalled();
+    expect(FAKE_EVENT_DISPATCHER.notify).not.toBeCalled();
 
     await expect(
       createUserUseCase.execute({
@@ -106,6 +87,6 @@ describe('Integration test for Create User use case', () => {
       }),
     ).rejects.toThrow('Credentials not match');
 
-    expect(spyWelcomeMail).not.toBeCalled();
+    expect(FAKE_EVENT_DISPATCHER.notify).not.toBeCalled();
   });
 });

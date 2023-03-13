@@ -7,10 +7,14 @@ import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway'
 import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassword.useCase';
 import { ChangePasswordController } from './ChangePassword.controller';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import {
+  FAKE_EVENT_DISPATCHER,
+  USERS_MOCK,
+} from '@shared/utils/mocks/users.mock';
 import {
   AUTH_GATEWAY,
   DATABASE_GATEWAY,
+  EVENT_DISPATCHER,
   ORM_ADAPTER,
 } from '@users/utils/constants';
 
@@ -45,6 +49,10 @@ describe('Integration test for ChangePassword controller', () => {
           useValue: {
             verify: jest.fn().mockResolvedValue({ userId: id }),
           },
+        },
+        {
+          provide: EVENT_DISPATCHER,
+          useValue: FAKE_EVENT_DISPATCHER,
         },
       ],
     }).compile();

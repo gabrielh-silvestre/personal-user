@@ -6,7 +6,10 @@ import { ChangePasswordUseCase } from './ChangePassword.useCase';
 import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import {
+  FAKE_EVENT_DISPATCHER,
+  USERS_MOCK,
+} from '@shared/utils/mocks/users.mock';
 
 const [{ id, password: oldPass }] = USERS_MOCK;
 const NEW_PASSWORD = 'new-password';
@@ -23,7 +26,10 @@ describe('Integration test for ChangePassword use case', () => {
     ormAdapter = new OrmMemoryAdapter();
     databaseGateway = new DatabaseGateway(ormAdapter);
 
-    changePasswordUseCase = new ChangePasswordUseCase(databaseGateway);
+    changePasswordUseCase = new ChangePasswordUseCase(
+      databaseGateway,
+      FAKE_EVENT_DISPATCHER,
+    );
   });
 
   it('should change password with success', async () => {

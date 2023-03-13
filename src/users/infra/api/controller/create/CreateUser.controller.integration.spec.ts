@@ -6,11 +6,14 @@ import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import {
-  MAIL_GATEWAY,
+  FAKE_EVENT_DISPATCHER,
+  USERS_MOCK,
+} from '@shared/utils/mocks/users.mock';
+import {
   DATABASE_GATEWAY,
   ORM_ADAPTER,
+  EVENT_DISPATCHER,
 } from '@users/utils/constants';
 
 const VALID_NEW_USER = {
@@ -32,18 +35,16 @@ describe('Integration test for Create User controller', () => {
       providers: [
         CreateUserUseCase,
         {
-          provide: MAIL_GATEWAY,
-          useValue: {
-            welcomeMail: jest.fn(),
-          },
-        },
-        {
           provide: ORM_ADAPTER,
           useClass: OrmMemoryAdapter,
         },
         {
           provide: DATABASE_GATEWAY,
           useClass: DatabaseGateway,
+        },
+        {
+          provide: EVENT_DISPATCHER,
+          useValue: FAKE_EVENT_DISPATCHER,
         },
       ],
     }).compile();

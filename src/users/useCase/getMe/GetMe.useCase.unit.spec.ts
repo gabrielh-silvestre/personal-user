@@ -1,30 +1,30 @@
-import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { GetMeUseCase } from './GetMe.useCase';
 
-import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
+import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
-
-describe('Integration tests for Get User by id use case', () => {
-  let ormAdapter: IOrmAdapter;
+describe('Unit tests for Get User by id use case', () => {
   let databaseGateway: IDatabaseGateway;
 
   let getMeUseCase: GetMeUseCase;
 
   beforeEach(() => {
-    OrmMemoryAdapter.reset(USERS_MOCK);
+    databaseGateway = {
+      create: jest.fn(),
+      existsByEmail: jest.fn(),
+      find: jest.fn(),
+      findByEmail: jest.fn(),
+      update: jest.fn(),
+    };
 
-    ormAdapter = new OrmMemoryAdapter();
-    databaseGateway = new DatabaseGateway(ormAdapter);
+    jest.mocked(databaseGateway.find).mockResolvedValue(RANDOM_USER_MOCK);
 
     getMeUseCase = new GetMeUseCase(databaseGateway);
   });
 
   it('should get a user by id with success', async () => {
-    const user = await getMeUseCase.execute(USERS_MOCK[0].id);
+    const user = await getMeUseCase.execute(RANDOM_USER_MOCK.id);
 
     expect(user).not.toBeNull();
     expect(user).toStrictEqual({
@@ -37,6 +37,8 @@ describe('Integration tests for Get User by id use case', () => {
   });
 
   it('should throw an error if user is not found', async () => {
+    jest.mocked(databaseGateway.find).mockResolvedValue(null);
+
     await expect(getMeUseCase.execute('invalid-id')).rejects.toThrow(
       'User not found',
     );

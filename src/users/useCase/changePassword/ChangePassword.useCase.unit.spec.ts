@@ -1,27 +1,30 @@
-import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { ChangePasswordUseCase } from './ChangePassword.useCase';
 
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
-import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
+import { Password } from '@users/domain/value-object/Password';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import { generateRandomUsers } from '@shared/utils/mocks/users.mock';
 
-const [{ id, password: oldPass }] = USERS_MOCK;
+const [USER] = generateRandomUsers(1);
+const { id } = USER;
 const NEW_PASSWORD = 'new-password';
 
-describe('Integration test for ChangePassword use case', () => {
-  let ormAdapter: IOrmAdapter;
+describe('Unit tests for ChangePassword use case', () => {
   let databaseGateway: IDatabaseGateway;
 
   let changePasswordUseCase: ChangePasswordUseCase;
 
   beforeEach(() => {
-    OrmMemoryAdapter.reset(USERS_MOCK);
+    databaseGateway = {
+      create: jest.fn(),
+      existsByEmail: jest.fn(),
+      find: jest.fn(),
+      findByEmail: jest.fn(),
+      update: jest.fn(),
+    };
 
-    ormAdapter = new OrmMemoryAdapter();
-    databaseGateway = new DatabaseGateway(ormAdapter);
+    jest.mocked(databaseGateway.find).mockResolvedValue(USER);
 
     changePasswordUseCase = new ChangePasswordUseCase(databaseGateway);
   });
@@ -33,9 +36,12 @@ describe('Integration test for ChangePassword use case', () => {
       confirmPassword: NEW_PASSWORD,
     });
 
-    const { password: newPass } = await databaseGateway.find(id);
-
-    expect(newPass).not.toEqual(oldPass);
+    expect(databaseGateway.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id,
+        password: expect.any(Password),
+      }),
+    );
   });
 
   it('should throw an error if passwords does not match', async () => {
@@ -49,6 +55,8 @@ describe('Integration test for ChangePassword use case', () => {
   });
 
   it('should throw an error if user is not found', async () => {
+    jest.mocked(databaseGateway.find).mockResolvedValue(null);
+
     await expect(
       changePasswordUseCase.execute({
         id: 'invalid-id',

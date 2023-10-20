@@ -1,27 +1,24 @@
+import { from } from 'rxjs';
+
 import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
 import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
 
-import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
-
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
-import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 import { AuthGateway } from '@users/infra/gateway/auth/Auth.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { from } from 'rxjs';
 
-const [{ id, email, username }] = USERS_MOCK;
+const [USER] = USERS_MOCK;
+const { id, email, username } = USER;
 
-describe('Integration test for RecoverPassword use case', () => {
-  let ormAdapter: IOrmAdapter;
+describe('Unit tests for RecoverPassword use case', () => {
   let databaseGateway: IDatabaseGateway;
 
   const mailPresenter: IMailPresenter = {
@@ -44,18 +41,21 @@ describe('Integration test for RecoverPassword use case', () => {
     'recoverPasswordMail',
   );
 
-  beforeAll(() => {
-    OrmMemoryAdapter.reset(USERS_MOCK);
-  });
-
   beforeEach(() => {
-    ormAdapter = new OrmMemoryAdapter();
     queueAdapter = {
       send: jest.fn().mockReturnValue(from('fake-message')),
       emit: jest.fn(),
     };
 
-    databaseGateway = new DatabaseGateway(ormAdapter);
+    databaseGateway = {
+      create: jest.fn(),
+      existsByEmail: jest.fn(),
+      find: jest.fn(),
+      findByEmail: jest.fn(),
+      update: jest.fn(),
+    };
+
+    jest.mocked(databaseGateway.findByEmail).mockResolvedValue(USER);
 
     mailGateway = new MailGateway(queueAdapter, mailPresenter);
     authGateway = new AuthGateway(queueAdapter);
@@ -82,6 +82,8 @@ describe('Integration test for RecoverPassword use case', () => {
   });
 
   it('should throw an error if user not found', async () => {
+    jest.mocked(databaseGateway.findByEmail).mockResolvedValue(null);
+
     spyGenerateRecoverPasswordToken.mockReset();
     spyRecoverPasswordMail.mockReset();
 

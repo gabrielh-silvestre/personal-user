@@ -1,24 +1,20 @@
 import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
 import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
-import type { IOrmAdapter } from '@users/infra/adapter/orm/Orm.adapter.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
-import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
-
 import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import { USERS_MOCK, RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
 
 const VALID_NEW_USER = {
-  username: 'Joe',
-  email: 'joe@email.com',
-  confirmEmail: 'joe@email.com',
+  username: RANDOM_USER_MOCK.username,
+  email: RANDOM_USER_MOCK.email,
+  confirmEmail: RANDOM_USER_MOCK.email,
   password: 'password',
   confirmPassword: 'password',
 };
@@ -31,11 +27,8 @@ const INVALID_NEW_USER = {
   confirmPassword: 'password',
 };
 
-describe('Integration test for Create User use case', () => {
-  OrmMemoryAdapter.reset(USERS_MOCK);
-
+describe('Unit tests for Create User use case', () => {
   let queueAdapter: IQueueAdapter;
-  let ormAdapter: IOrmAdapter;
 
   let databaseGateway: IDatabaseGateway;
 
@@ -49,13 +42,20 @@ describe('Integration test for Create User use case', () => {
   const spyWelcomeMail = jest.spyOn(MailGateway.prototype, 'welcomeMail');
 
   beforeEach(() => {
-    ormAdapter = new OrmMemoryAdapter();
     queueAdapter = {
       send: jest.fn(),
       emit: jest.fn(),
     };
 
-    databaseGateway = new DatabaseGateway(ormAdapter);
+    databaseGateway = {
+      create: jest.fn(),
+      existsByEmail: jest.fn(),
+      find: jest.fn(),
+      findByEmail: jest.fn(),
+      update: jest.fn(),
+    };
+
+    jest.mocked(databaseGateway.existsByEmail).mockResolvedValue(false);
 
     mailGateway = new MailGateway(queueAdapter, mailPresenter);
 
@@ -82,6 +82,8 @@ describe('Integration test for Create User use case', () => {
   });
 
   it('should throw an error if email is already registered', async () => {
+    jest.mocked(databaseGateway.existsByEmail).mockResolvedValueOnce(true);
+
     await expect(createUserUseCase.execute(INVALID_NEW_USER)).rejects.toThrow(
       'Email already registered',
     );

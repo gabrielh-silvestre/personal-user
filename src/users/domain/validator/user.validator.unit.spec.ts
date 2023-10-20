@@ -19,23 +19,21 @@ const ERROR_MESSAGES = {
   updatedAt: 'UpdatedAt must be a valid date',
 };
 
-describe('Unit test User validator', () => {
+describe('Unit test IUser validator', () => {
   it('should not throw any errors on valid users', () => {
     const userValidator = UserClassValidator.init();
 
-    expect(() => userValidator.validate(VALID_USER)).not.toThrow();
+    expect(() => userValidator.validate(VALID_USER.toDto())).not.toThrow();
   });
 
   it(`should throw "${ERROR_MESSAGES.id}" error on invalid id`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
+      ...VALID_USER.toDto(),
       id: 'invalid-id',
-      username: VALID_USER.username,
-      email: VALID_USER.email,
-      createdAt: VALID_USER.createdAt,
-      updatedAt: VALID_USER.updatedAt,
-      password: VALID_USER.password,
-    };
+    } as IUser;
+
+    // console.log(invalidUser);
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.id,
@@ -45,13 +43,9 @@ describe('Unit test User validator', () => {
   it(`should throw "${ERROR_MESSAGES.usernameMinLength}" error on invalid username`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
-      id: VALID_USER.id,
-      username: 'ab',
-      email: VALID_USER.email,
-      createdAt: VALID_USER.createdAt,
-      updatedAt: VALID_USER.updatedAt,
-      password: VALID_USER.password,
-    };
+      ...VALID_USER.toDto(),
+      username: 'u',
+    } as IUser;
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.usernameMinLength,
@@ -61,13 +55,9 @@ describe('Unit test User validator', () => {
   it(`should throw "${ERROR_MESSAGES.usernameMaxLength}" error on invalid username`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
-      id: VALID_USER.id,
-      username: 'abcdefghi',
-      email: VALID_USER.email,
-      createdAt: VALID_USER.createdAt,
-      updatedAt: VALID_USER.updatedAt,
-      password: VALID_USER.password,
-    };
+      ...VALID_USER.toDto(),
+      username: 'u'.repeat(20),
+    } as IUser;
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.usernameMaxLength,
@@ -77,13 +67,9 @@ describe('Unit test User validator', () => {
   it(`should throw "${ERROR_MESSAGES.usernameRequired}" error on invalid username`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
-      id: VALID_USER.id,
+      ...VALID_USER.toDto(),
       username: '',
-      email: VALID_USER.email,
-      createdAt: VALID_USER.createdAt,
-      updatedAt: VALID_USER.updatedAt,
-      password: VALID_USER.password,
-    };
+    } as IUser;
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.usernameRequired,
@@ -93,13 +79,9 @@ describe('Unit test User validator', () => {
   it(`should throw "${ERROR_MESSAGES.email}" error on invalid email`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
-      id: VALID_USER.id,
-      username: VALID_USER.username,
+      ...VALID_USER.toDto(),
       email: 'invalid-email',
-      createdAt: VALID_USER.createdAt,
-      updatedAt: VALID_USER.updatedAt,
-      password: VALID_USER.password,
-    };
+    } as IUser;
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.email,
@@ -109,13 +91,9 @@ describe('Unit test User validator', () => {
   it(`should throw "${ERROR_MESSAGES.createdAt}" error on invalid createdAt`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
-      id: VALID_USER.id,
-      username: VALID_USER.username,
-      email: VALID_USER.email,
+      ...VALID_USER.toDto(),
       createdAt: new Date('invalid-date'),
-      updatedAt: VALID_USER.updatedAt,
-      password: VALID_USER.password,
-    };
+    } as IUser;
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.createdAt,
@@ -125,13 +103,9 @@ describe('Unit test User validator', () => {
   it(`should throw "${ERROR_MESSAGES.updatedAt}" error on invalid updatedAt`, () => {
     const userValidator = UserClassValidator.init();
     const invalidUser: IUser = {
-      id: VALID_USER.id,
-      username: VALID_USER.username,
-      email: VALID_USER.email,
-      createdAt: VALID_USER.createdAt,
+      ...VALID_USER.toDto(),
       updatedAt: new Date('invalid-date'),
-      password: VALID_USER.password,
-    };
+    } as IUser;
 
     expect(() => userValidator.validate(invalidUser)).toThrow(
       ERROR_MESSAGES.updatedAt,

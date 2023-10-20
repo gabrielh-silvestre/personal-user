@@ -1,10 +1,10 @@
 import type { IValidator } from 'src/shared/domain/validator/validator.interface';
-import type { IUser } from '../entity/user.interface';
 
+import { User } from '../entity/User';
 import { UserClassValidator } from '../validator/user.class.validator';
 
 export class UserValidatorFactory {
-  public static create(): IValidator<IUser> {
+  public static create(): IValidator<User> {
     return UserClassValidator.init();
   }
 }

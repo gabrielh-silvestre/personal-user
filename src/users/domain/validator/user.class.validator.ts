@@ -9,11 +9,11 @@ import {
 } from 'class-validator';
 
 import type { IValidator } from '@shared/domain/validator/validator.interface';
-import type { IUser } from '../entity/user.interface';
+import type { IUserProps } from '../entity/user.interface';
 
 import { UserException } from '../exception/User.exception';
 
-export class UserClassValidator implements IValidator<IUser> {
+export class UserClassValidator implements IValidator<IUserProps> {
   @IsUUID(4, { message: 'Id must be a valid UUID v4' })
   private readonly id: string;
 
@@ -49,7 +49,7 @@ export class UserClassValidator implements IValidator<IUser> {
     return new UserClassValidator('', '', '', new Date(), new Date());
   }
 
-  validate(entity: IUser): void | never {
+  validate(entity: IUserProps): void | never {
     const { id, username, email, createdAt, updatedAt } = entity;
 
     const userValidation = new UserClassValidator(

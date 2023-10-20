@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 
 import { User } from '../entity/User';
 import { PasswordFactory } from './Password.factory';
+import { OrmUserDto } from '@users/infra/gateway/database/Database.gateway.interface';
 
 export class UserFactory {
   public static create(
@@ -15,6 +16,9 @@ export class UserFactory {
     return newUser;
   }
 
+  /**
+   * @deprecated Use transformFromDto instead, this method is more specific for the gateway
+   */
   public static createFromPersistence(
     id: string,
     username: string,
@@ -25,6 +29,20 @@ export class UserFactory {
   ): User {
     const newUser = new User(id, username, email, createdAt, updatedAt);
     newUser.changePassword(PasswordFactory.createFromHash(password));
+
+    return newUser;
+  }
+
+  public static transformFromDto(dto: OrmUserDto): User {
+    const newUser = new User(
+      dto.id,
+      dto.username,
+      dto.email,
+      dto.createdAt,
+      dto.updatedAt,
+    );
+
+    newUser.changePassword(PasswordFactory.createFromHash(dto.password));
 
     return newUser;
   }

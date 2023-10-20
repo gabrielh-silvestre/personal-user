@@ -40,4 +40,23 @@ describe('Test Domain User factory', () => {
     expect(user.password).toBeDefined();
     expect(user.password.toString()).toBe('password');
   });
+
+  it('should transform user from Orm DTO', () => {
+    const user = UserFactory.transformFromDto({
+      id: VALID_ID,
+      username: VALID_USERNAME,
+      email: VALID_EMAIL,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: VALID_PASSWORD,
+    });
+
+    expect(user).toBeDefined();
+    expect(user.id).toBeDefined();
+    expect(user.username).toBe('username');
+    expect(user.email).toBe('email@email.com');
+
+    expect(user.password).toBeDefined();
+    expect(user.password.toString()).toBe('password');
+  });
 });

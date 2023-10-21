@@ -1,40 +1,34 @@
 import type { Request } from 'express';
 
 import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 import { from } from 'rxjs';
 
 import { GetMeController } from './GetMe.controller';
 
 import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import {
-  AUTH_GATEWAY,
-  DATABASE_GATEWAY,
-  ORM_ADAPTER,
-} from '@users/utils/constants';
+import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
+import { AUTH_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+
+const USER = RANDOM_USER_MOCK();
+const { id: userId } = USER;
 
 describe('Integration tests for Get Me controller', () => {
+  const client = new PrismaClient();
+
   let userController: GetMeController;
-  const [{ id: userId }] = USERS_MOCK;
 
   beforeEach(async () => {
-    OrmMemoryAdapter.reset(USERS_MOCK);
-
     const module = await Test.createTestingModule({
       controllers: [GetMeController],
       providers: [
         GetMeUseCase,
         {
           provide: DATABASE_GATEWAY,
-          useClass: DatabaseGateway,
-        },
-        {
-          provide: ORM_ADAPTER,
-          useClass: OrmMemoryAdapter,
+          useValue: new DatabaseGateway(client),
         },
         {
           provide: AUTH_GATEWAY,
@@ -55,6 +49,19 @@ describe('Integration tests for Get Me controller', () => {
   });
 
   describe('should get a user', () => {
+    beforeEach(async () => {
+      await client.user.create({
+        data: {
+          ...USER.toDto(),
+          password: USER.password.toString(),
+        },
+      });
+    });
+
+    afterEach(async () => {
+      await client.user.deleteMany({});
+    });
+
     it('with REST request', async () => {
       const response = await userController.handleRest({
         user: { userId },

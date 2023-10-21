@@ -1,28 +1,13 @@
-import type { IUser } from './user.interface';
+import type { IUser, IUserProps, UserProps } from './user.interface';
 import type { IPassword } from '../value-object/Password/password.interface';
+
+import { Entity } from '@shared/domain/entity/Entity.abstract';
 
 import { UserValidatorFactory } from '../factory/User.validator.factory';
 
-export class User implements IUser {
-  private _id: string;
-  private _username: string;
-  private _email: string;
-  private _password: IPassword;
-  private _createdAt: Date;
-  private _updatedAt: Date;
-
-  constructor(
-    id: string,
-    username: string,
-    email: string,
-    createdAt: Date,
-    updatedAt: Date,
-  ) {
-    this._id = id;
-    this._username = username;
-    this._email = email;
-    this._updatedAt = updatedAt;
-    this._createdAt = createdAt;
+export class User extends Entity<UserProps> implements IUser {
+  constructor(props: IUserProps) {
+    super(props);
 
     this.validate();
   }
@@ -32,47 +17,32 @@ export class User implements IUser {
   }
 
   changeUsername(username: string): void {
-    this._username = username;
-    this._updatedAt = new Date();
+    this.set('username', username);
 
     this.validate();
   }
 
   changeEmail(email: string): void {
-    this._email = email;
-    this._updatedAt = new Date();
+    this.set('email', email);
 
     this.validate();
   }
 
   changePassword(password: IPassword): void {
-    this._password = password;
-    this._updatedAt = new Date();
+    this.set('password', password);
 
     this.validate();
   }
 
-  get id(): string {
-    return this._id;
-  }
-
   get username(): string {
-    return this._username;
-  }
-
-  get password(): IPassword {
-    return this._password;
+    return this.get('username');
   }
 
   get email(): string {
-    return this._email;
+    return this.get('email');
   }
 
-  get updatedAt(): Date {
-    return this._updatedAt;
-  }
-
-  get createdAt(): Date {
-    return this._createdAt;
+  get password(): IPassword {
+    return this.get('password');
   }
 }

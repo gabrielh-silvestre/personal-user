@@ -22,15 +22,15 @@ describe('Test Domain User factory', () => {
     expect(user.password.toString()).not.toBe('password');
   });
 
-  it('should create a user from persistence', () => {
-    const user = UserFactory.createFromPersistence(
-      VALID_ID,
-      VALID_USERNAME,
-      VALID_EMAIL,
-      new Date(),
-      new Date(),
-      VALID_PASSWORD,
-    );
+  it('should transform user from Orm DTO', () => {
+    const user = UserFactory.transformFromDto({
+      id: VALID_ID,
+      username: VALID_USERNAME,
+      email: VALID_EMAIL,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: VALID_PASSWORD,
+    });
 
     expect(user).toBeDefined();
     expect(user.id).toBeDefined();

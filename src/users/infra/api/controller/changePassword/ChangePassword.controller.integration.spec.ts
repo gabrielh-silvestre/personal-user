@@ -1,44 +1,35 @@
 import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassword.useCase';
 import { ChangePasswordController } from './ChangePassword.controller';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import {
-  AUTH_GATEWAY,
-  DATABASE_GATEWAY,
-  ORM_ADAPTER,
-} from '@users/utils/constants';
+import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
+import { AUTH_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
-const [{ id, password: oldPassword }] = USERS_MOCK;
+const USER = RANDOM_USER_MOCK();
+const { id, password: oldPassword } = USER;
 const VALID_PASSWORD_CHANGE = {
   password: 'new-password',
   confirmPassword: 'new-password',
 };
 
 describe('Integration test for ChangePassword controller', () => {
-  let databaseGateway: DatabaseGateway;
+  const client = new PrismaClient();
 
   let changePasswordController: ChangePasswordController;
 
   beforeEach(async () => {
-    OrmMemoryAdapter.reset(USERS_MOCK);
-
     const module = await Test.createTestingModule({
       controllers: [ChangePasswordController],
       providers: [
         ChangePasswordUseCase,
         {
-          provide: ORM_ADAPTER,
-          useClass: OrmMemoryAdapter,
-        },
-        {
           provide: DATABASE_GATEWAY,
-          useClass: DatabaseGateway,
+          useValue: new DatabaseGateway(client),
         },
         {
           provide: AUTH_GATEWAY,
@@ -49,20 +40,34 @@ describe('Integration test for ChangePassword controller', () => {
       ],
     }).compile();
 
-    databaseGateway = module.get<DatabaseGateway>(DATABASE_GATEWAY);
     changePasswordController = module.get<ChangePasswordController>(
       ChangePasswordController,
     );
   });
 
   describe('should change password', () => {
+    beforeEach(async () => {
+      await client.user.create({
+        data: {
+          ...USER.toDto(),
+          password: USER.password.toString(),
+        },
+      });
+    });
+
+    afterEach(async () => {
+      await client.user.deleteMany({});
+    });
+
     it('with REST request', async () => {
       await changePasswordController.handleRest(
         { user: { userId: id } } as Request,
         VALID_PASSWORD_CHANGE,
       );
 
-      const { password: newPassword } = await databaseGateway.find(id);
+      const { password: newPassword } = await client.user.findUnique({
+        where: { id },
+      });
 
       expect(newPassword).not.toEqual(oldPassword);
     });
@@ -73,7 +78,9 @@ describe('Integration test for ChangePassword controller', () => {
         VALID_PASSWORD_CHANGE,
       );
 
-      const { password: newPassword } = await databaseGateway.find(id);
+      const { password: newPassword } = await client.user.findUnique({
+        where: { id },
+      });
 
       expect(newPassword).not.toEqual(oldPassword);
     });

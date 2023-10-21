@@ -1,13 +1,6 @@
-import type { IMailPresenter } from '@users/infra/presenter/mail/Mail.presenter.interface';
-import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
-
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
-import type { IQueueAdapter } from '@users/infra/adapter/queue/Queue.adapter.interface';
-
 import { CreateUserUseCase } from './CreateUser.useCase';
-
-import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 
 import { USERS_MOCK, RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
 
@@ -30,25 +23,11 @@ const INVALID_NEW_USER = {
 };
 
 describe('Unit tests for Create User use case', () => {
-  let queueAdapter: IQueueAdapter;
-
   let databaseGateway: IDatabaseGateway;
-
-  const mailPresenter: IMailPresenter = {
-    present: jest.fn().mockResolvedValue({ html: '' }),
-  };
-  let mailGateway: IMailGateway;
 
   let createUserUseCase: CreateUserUseCase;
 
-  const spyWelcomeMail = jest.spyOn(MailGateway.prototype, 'welcomeMail');
-
   beforeEach(() => {
-    queueAdapter = {
-      send: jest.fn(),
-      emit: jest.fn(),
-    };
-
     databaseGateway = {
       create: jest.fn(),
       existsByEmail: jest.fn(),
@@ -59,13 +38,7 @@ describe('Unit tests for Create User use case', () => {
 
     jest.mocked(databaseGateway.existsByEmail).mockResolvedValue(false);
 
-    mailGateway = new MailGateway(queueAdapter, mailPresenter);
-
-    createUserUseCase = new CreateUserUseCase(databaseGateway, mailGateway);
-  });
-
-  afterEach(() => {
-    spyWelcomeMail.mockClear();
+    createUserUseCase = new CreateUserUseCase(databaseGateway);
   });
 
   it('should create a user with success', async () => {
@@ -79,8 +52,6 @@ describe('Unit tests for Create User use case', () => {
       lastUpdate: expect.any(Date),
       created: expect.any(Date),
     });
-
-    expect(spyWelcomeMail).toBeCalledTimes(1);
   });
 
   it('should throw an error if email is already registered', async () => {
@@ -89,8 +60,6 @@ describe('Unit tests for Create User use case', () => {
     await expect(createUserUseCase.execute(INVALID_NEW_USER)).rejects.toThrow(
       'Email already registered',
     );
-
-    expect(spyWelcomeMail).not.toBeCalled();
   });
 
   it('should throw and error if credentials not match', async () => {
@@ -101,15 +70,11 @@ describe('Unit tests for Create User use case', () => {
       }),
     ).rejects.toThrow('Credentials not match');
 
-    expect(spyWelcomeMail).not.toBeCalled();
-
     await expect(
       createUserUseCase.execute({
         ...VALID_NEW_USER,
         confirmPassword: 'invalid-password',
       }),
     ).rejects.toThrow('Credentials not match');
-
-    expect(spyWelcomeMail).not.toBeCalled();
   });
 });

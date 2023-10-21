@@ -18,13 +18,13 @@ describe('Unit tests for Get User by id use case', () => {
       update: jest.fn(),
     };
 
-    jest.mocked(databaseGateway.find).mockResolvedValue(RANDOM_USER_MOCK);
+    jest.mocked(databaseGateway.find).mockResolvedValue(RANDOM_USER_MOCK());
 
     getMeUseCase = new GetMeUseCase(databaseGateway);
   });
 
   it('should get a user by id with success', async () => {
-    const user = await getMeUseCase.execute(RANDOM_USER_MOCK.id);
+    const user = await getMeUseCase.execute(RANDOM_USER_MOCK().id);
 
     expect(user).not.toBeNull();
     expect(user).toStrictEqual({

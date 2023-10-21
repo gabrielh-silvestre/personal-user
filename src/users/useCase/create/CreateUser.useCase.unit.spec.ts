@@ -11,10 +11,12 @@ import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 
 import { USERS_MOCK, RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
 
+const USER = RANDOM_USER_MOCK();
+
 const VALID_NEW_USER = {
-  username: RANDOM_USER_MOCK.username,
-  email: RANDOM_USER_MOCK.email,
-  confirmEmail: RANDOM_USER_MOCK.email,
+  username: USER.username,
+  email: USER.email,
+  confirmEmail: USER.email,
   password: 'password',
   confirmPassword: 'password',
 };

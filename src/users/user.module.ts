@@ -24,7 +24,6 @@ import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
 import { MailPresenter } from './infra/presenter/mail/Mail.presenter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
-import { OrmPrismaAdapter } from './infra/adapter/orm/prisma/OrmPrisma.adapter';
 import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
 
 import { TemplateEngineEjsAdapter } from './infra/adapter/template/ejs/TemplateEngineEjs.adapter';
@@ -38,7 +37,6 @@ import {
   TEMPLATE_ADAPTER,
   DATABASE_GATEWAY,
   QUEUE_ADAPTER,
-  ORM_ADAPTER,
 } from './utils/constants';
 
 @Module({
@@ -80,10 +78,6 @@ import {
     {
       provide: QUEUE_ADAPTER,
       useClass: QueueRmqAdapter,
-    },
-    {
-      provide: ORM_ADAPTER,
-      useClass: OrmPrismaAdapter,
     },
   ],
 })

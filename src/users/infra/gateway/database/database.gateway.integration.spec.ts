@@ -15,6 +15,11 @@ describe('Integration test infra DatabaseGateway', () => {
     await client.user.deleteMany({});
   });
 
+  afterAll(async () => {
+    await client.user.deleteMany({});
+    await client.$disconnect();
+  });
+
   beforeEach(() => {
     databaseGateway = new DatabaseGateway(client);
   });

@@ -1,17 +1,12 @@
 import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 
 import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
-import { OrmMemoryAdapter } from '@users/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import {
-  MAIL_GATEWAY,
-  DATABASE_GATEWAY,
-  ORM_ADAPTER,
-} from '@users/utils/constants';
+import { MAIL_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 const VALID_NEW_USER = {
   username: 'Joe',
@@ -22,11 +17,11 @@ const VALID_NEW_USER = {
 };
 
 describe('Integration test for Create User controller', () => {
+  const client = new PrismaClient();
+
   let userController: CreateUserController;
 
   beforeEach(async () => {
-    OrmMemoryAdapter.reset(USERS_MOCK);
-
     const module = await Test.createTestingModule({
       controllers: [CreateUserController],
       providers: [
@@ -37,13 +32,10 @@ describe('Integration test for Create User controller', () => {
             welcomeMail: jest.fn(),
           },
         },
-        {
-          provide: ORM_ADAPTER,
-          useClass: OrmMemoryAdapter,
-        },
+
         {
           provide: DATABASE_GATEWAY,
-          useClass: DatabaseGateway,
+          useValue: new DatabaseGateway(client),
         },
       ],
     }).compile();
@@ -52,6 +44,10 @@ describe('Integration test for Create User controller', () => {
   });
 
   describe('should create a user', () => {
+    beforeEach(async () => {
+      await client.user.deleteMany({});
+    });
+
     it('with REST request', async () => {
       const response = await userController.handleRest(VALID_NEW_USER);
 

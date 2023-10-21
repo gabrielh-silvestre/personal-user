@@ -4,9 +4,9 @@ import { ChangePasswordUseCase } from './ChangePassword.useCase';
 
 import { Password } from '@users/domain/value-object/Password';
 
-import { generateRandomUsers } from '@shared/utils/mocks/users.mock';
+import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
 
-const [USER] = generateRandomUsers(1);
+const USER = RANDOM_USER_MOCK();
 const { id } = USER;
 const NEW_PASSWORD = 'new-password';
 

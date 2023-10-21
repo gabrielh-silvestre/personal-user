@@ -7,11 +7,7 @@ import { RecoverPasswordController } from './RecoverPassword.controller';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
-import {
-  AUTH_GATEWAY,
-  MAIL_GATEWAY,
-  DATABASE_GATEWAY,
-} from '@users/utils/constants';
+import { AUTH_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 const USER = RANDOM_USER_MOCK();
 const { email } = USER;
@@ -34,12 +30,6 @@ describe('Integration tests for RecoverPassword controller', () => {
           provide: AUTH_GATEWAY,
           useValue: {
             generateRecoverPasswordToken: jest.fn().mockResolvedValue('token'),
-          },
-        },
-        {
-          provide: MAIL_GATEWAY,
-          useValue: {
-            recoverPasswordMail: jest.fn(),
           },
         },
       ],

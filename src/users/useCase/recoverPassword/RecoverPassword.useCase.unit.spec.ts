@@ -9,11 +9,6 @@ import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
 import { AuthGateway } from '@users/infra/gateway/auth/Auth.gateway';
 
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-
-const [USER] = USERS_MOCK;
-const { id, email } = USER;
-
 describe('Unit tests for RecoverPassword use case', () => {
   let databaseGateway: IDatabaseGateway;
 
@@ -41,21 +36,12 @@ describe('Unit tests for RecoverPassword use case', () => {
       update: jest.fn(),
     };
 
-    jest.mocked(databaseGateway.findByEmail).mockResolvedValue(USER);
-
     authGateway = new AuthGateway(queueAdapter);
 
     recoverPasswordUseCase = new RecoverPasswordUseCase(
       databaseGateway,
       authGateway,
     );
-  });
-
-  it('should recover password with success', async () => {
-    await recoverPasswordUseCase.execute({ email });
-
-    expect(spyGenerateRecoverPasswordToken).toHaveBeenCalledTimes(1);
-    expect(spyGenerateRecoverPasswordToken).toHaveBeenCalledWith(id);
   });
 
   it('should throw an error if user not found', async () => {

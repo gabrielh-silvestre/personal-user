@@ -6,7 +6,7 @@ import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
-import { MAIL_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+import { DATABASE_GATEWAY } from '@users/utils/constants';
 
 const VALID_NEW_USER = {
   username: 'Joe',
@@ -26,13 +26,6 @@ describe('Integration test for Create User controller', () => {
       controllers: [CreateUserController],
       providers: [
         CreateUserUseCase,
-        {
-          provide: MAIL_GATEWAY,
-          useValue: {
-            welcomeMail: jest.fn(),
-          },
-        },
-
         {
           provide: DATABASE_GATEWAY,
           useValue: new DatabaseGateway(client),

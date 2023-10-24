@@ -8,7 +8,7 @@ import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassw
 import { ChangePasswordController } from './ChangePassword.controller';
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
-import { AUTH_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 const USER = RANDOM_USER_MOCK();
 const { id, password: oldPassword } = USER;
@@ -32,7 +32,7 @@ describe('Integration test for ChangePassword controller', () => {
           useValue: new DatabaseGateway(client),
         },
         {
-          provide: AUTH_GATEWAY,
+          provide: TOKEN_GATEWAY,
           useValue: {
             verify: jest.fn().mockResolvedValue({ userId: id }),
           },
@@ -60,8 +60,6 @@ describe('Integration test for ChangePassword controller', () => {
     });
 
     it('with REST request', async () => {
-      console.log(await client.user.findUnique({ where: { id } }));
-
       await changePasswordController.handleRest(
         { user: { userId: id } } as Request,
         VALID_PASSWORD_CHANGE,
@@ -75,8 +73,6 @@ describe('Integration test for ChangePassword controller', () => {
     });
 
     it('with gRPC request', async () => {
-      console.log(await client.user.findUnique({ where: { id } }));
-
       await changePasswordController.handleGrpc(
         { user: { userId: id } } as Request,
         VALID_PASSWORD_CHANGE,

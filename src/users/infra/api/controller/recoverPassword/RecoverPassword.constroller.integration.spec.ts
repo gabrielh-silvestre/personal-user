@@ -1,13 +1,15 @@
 import { Test } from '@nestjs/testing';
+import { JwtModule } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 
 import { RecoverPasswordUseCase } from '@users/useCase/recoverPassword/RecoverPassword.useCase';
 import { RecoverPasswordController } from './RecoverPassword.controller';
 
+import { TokenGateway } from '@users/infra/gateway/token/Token.gateway';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
-import { AUTH_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 const USER = RANDOM_USER_MOCK();
 const { email } = USER;
@@ -19,6 +21,7 @@ describe('Integration tests for RecoverPassword controller', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [JwtModule.register({ secret: 'secret' })],
       controllers: [RecoverPasswordController],
       providers: [
         RecoverPasswordUseCase,
@@ -27,10 +30,8 @@ describe('Integration tests for RecoverPassword controller', () => {
           useValue: new DatabaseGateway(client),
         },
         {
-          provide: AUTH_GATEWAY,
-          useValue: {
-            generateRecoverPasswordToken: jest.fn().mockResolvedValue('token'),
-          },
+          provide: TOKEN_GATEWAY,
+          useClass: TokenGateway,
         },
       ],
     }).compile();

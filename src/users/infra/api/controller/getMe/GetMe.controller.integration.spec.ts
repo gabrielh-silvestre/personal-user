@@ -11,7 +11,7 @@ import { GetMeUseCase } from '@users/useCase/getMe/GetMe.useCase';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
-import { AUTH_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 const USER = RANDOM_USER_MOCK();
 const { id: userId } = USER;
@@ -31,7 +31,7 @@ describe('Integration tests for Get Me controller', () => {
           useValue: new DatabaseGateway(client),
         },
         {
-          provide: AUTH_GATEWAY,
+          provide: TOKEN_GATEWAY,
           useValue: {
             verify: jest.fn().mockResolvedValue(from([{ userId }])),
           },

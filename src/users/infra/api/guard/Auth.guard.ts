@@ -5,16 +5,16 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
+import type { ITokenGateway } from '@users/infra/gateway/token/token.gateway.interface';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
-import { AUTH_GATEWAY } from '@users/utils/constants';
+import { TOKEN_GATEWAY } from '@users/utils/constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    @Inject(AUTH_GATEWAY) private readonly authGateway: IAuthGateway,
+    @Inject(TOKEN_GATEWAY) private readonly authGateway: ITokenGateway,
   ) {}
 
   private recoverToken(context: ExecutionContext): string | null {
@@ -69,7 +69,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const response = await this.authGateway.verify(token);
+      const response = await this.authGateway.validate(token);
 
       this.saveUserId(context, response.userId);
 

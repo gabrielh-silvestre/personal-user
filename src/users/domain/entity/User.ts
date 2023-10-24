@@ -34,9 +34,11 @@ export class User extends Entity<UserProps> implements IUser {
     this.validate();
   }
 
-  // setAvatar(avatar: string): void {
+  setAvatar(avatar: string): void {
+    this.set('avatar', avatar);
 
-  // }
+    this.validate();
+  }
 
   get username(): string {
     return this.get('username');

@@ -18,7 +18,12 @@ export class UserZodValidator implements IValidator<IUserProps> {
       .min(3, ErrorMessage.Validator.UsernameTooShort)
       .max(8, ErrorMessage.Validator.UsernameTooLong),
     email: z.string().email(ErrorMessage.Validator.InvalidEmail),
-    avatar: z.string().url(ErrorMessage.Validator.InvalidEmail).nullable(),
+    avatar: z
+      .string({
+        required_error: ErrorMessage.Validator.InvalidAvatar,
+        invalid_type_error: ErrorMessage.Validator.InvalidAvatar,
+      })
+      .nullable(),
     createdAt: z.date({
       required_error: ErrorMessage.Validator.InvalidCreatedAt,
       invalid_type_error: ErrorMessage.Validator.InvalidCreatedAt,

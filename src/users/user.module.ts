@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
+import { AwsModule } from '@shared/modules/aws/Aws.module';
 
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
@@ -19,19 +20,23 @@ import { RecoverPasswordUseCase } from './useCase/recoverPassword/RecoverPasswor
 import { ChangePasswordController } from './infra/api/controller/changePassword/ChangePassword.controller';
 import { ChangePasswordUseCase } from './useCase/changePassword/ChangePassword.useCase';
 
-import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
+import { ChangeAvatarController } from './infra/api/controller/changeAvatar/ChangeAvatar.controller';
+import { ChangeAvatarUseCase } from './useCase/changeAvatar/ChangeAvatar.useCase';
+
+import { BucketGateway } from './infra/gateway/bucket/Bucket.gateway';
 
 import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
 
 import {
   AUTH_GATEWAY,
   AUTH_QUEUE,
+  BUCKET_GATEWAY,
   DATABASE_GATEWAY,
   QUEUE_ADAPTER,
 } from './utils/constants';
 
 @Module({
-  imports: [RmqModule.register(AUTH_QUEUE)],
+  imports: [RmqModule.register(AUTH_QUEUE), AwsModule],
   exports: [GetMeUseCase],
   controllers: [
     CreateUserController,
@@ -39,6 +44,7 @@ import {
     VerifyCredentialsController,
     RecoverPasswordController,
     ChangePasswordController,
+    ChangeAvatarController,
   ],
   providers: [
     CreateUserUseCase,
@@ -46,9 +52,15 @@ import {
     VerifyCredentialsUseCase,
     RecoverPasswordUseCase,
     ChangePasswordUseCase,
+    ChangeAvatarUseCase,
     {
       provide: AUTH_GATEWAY,
-      useClass: AuthGateway,
+      useValue: {
+        verify: async () => ({
+          // TODO: change this mock, refactor this gateway
+          userId: 'f4aa8420-ee76-4ab7-a353-4cdea1c94120',
+        }),
+      },
     },
     {
       provide: DATABASE_GATEWAY,
@@ -57,6 +69,10 @@ import {
     {
       provide: QUEUE_ADAPTER,
       useClass: QueueRmqAdapter,
+    },
+    {
+      provide: BUCKET_GATEWAY,
+      useClass: BucketGateway,
     },
   ],
 })

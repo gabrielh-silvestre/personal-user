@@ -13,7 +13,7 @@ export class User extends Entity<UserProps> implements IUser {
   }
 
   private validate(): void {
-    UserValidatorFactory.create().validate(this);
+    UserValidatorFactory.create().validate(this.toDto());
   }
 
   changeUsername(username: string): void {
@@ -34,6 +34,12 @@ export class User extends Entity<UserProps> implements IUser {
     this.validate();
   }
 
+  setAvatar(avatar: string): void {
+    this.set('avatar', avatar);
+
+    this.validate();
+  }
+
   get username(): string {
     return this.get('username');
   }
@@ -44,5 +50,9 @@ export class User extends Entity<UserProps> implements IUser {
 
   get password(): IPassword {
     return this.get('password');
+  }
+
+  get avatar(): string | null {
+    return this.get('avatar');
   }
 }

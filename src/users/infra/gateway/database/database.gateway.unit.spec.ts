@@ -57,6 +57,7 @@ describe('Unit test infra DatabaseGateway', () => {
         id: newUser.id,
         username: newUser.username,
         email: newUser.email,
+        avatar: newUser.avatar,
         password: newUser.password.toString(),
         createdAt: newUser.createdAt,
         updatedAt: newUser.updatedAt,
@@ -75,6 +76,7 @@ describe('Unit test infra DatabaseGateway', () => {
       data: {
         username: userToUpdate.username,
         email: userToUpdate.email,
+        avatar: userToUpdate.avatar,
         password: userToUpdate.password.toString(),
         createdAt: userToUpdate.createdAt,
         updatedAt: userToUpdate.updatedAt,

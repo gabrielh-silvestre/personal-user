@@ -60,6 +60,8 @@ describe('Integration test for ChangePassword controller', () => {
     });
 
     it('with REST request', async () => {
+      console.log(await client.user.findUnique({ where: { id } }));
+
       await changePasswordController.handleRest(
         { user: { userId: id } } as Request,
         VALID_PASSWORD_CHANGE,
@@ -73,6 +75,8 @@ describe('Integration test for ChangePassword controller', () => {
     });
 
     it('with gRPC request', async () => {
+      console.log(await client.user.findUnique({ where: { id } }));
+
       await changePasswordController.handleGrpc(
         { user: { userId: id } } as Request,
         VALID_PASSWORD_CHANGE,

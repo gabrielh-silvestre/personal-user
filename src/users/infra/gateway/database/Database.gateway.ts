@@ -13,12 +13,8 @@ export class DatabaseGateway implements IDatabaseGateway {
 
   private convertToOrm(user: User): OrmUserDto {
     return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
+      ...user.toDto(),
       password: user.password.toString(),
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     };
   }
 

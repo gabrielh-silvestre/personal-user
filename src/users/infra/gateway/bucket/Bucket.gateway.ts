@@ -7,7 +7,7 @@ import type { IUser } from '@users/domain/entity/user.interface';
 
 import { S3Service } from '@shared/modules/aws/S3.service';
 
-import { BUCKET_NAME } from '@users/utils/constants';
+import { BUCKET_NAME } from '@shared/utils/constants';
 
 @Injectable()
 export class BucketGateway implements IBucketGateway {

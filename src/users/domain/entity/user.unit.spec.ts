@@ -12,6 +12,7 @@ const CREATE_USER_PROPS: IUserProps = {
   id: uuid(),
   username: VALID_USERNAME,
   email: VALID_EMAIL,
+  avatar: null,
   password: PasswordFactory.createNew('password'),
   createdAt: new Date(),
   updatedAt: new Date(),

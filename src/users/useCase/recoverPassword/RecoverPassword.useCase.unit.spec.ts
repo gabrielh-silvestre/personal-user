@@ -1,16 +1,16 @@
-import type { IAuthGateway } from '@users/infra/gateway/auth/auth.gateway.interface';
+import type { ITokenGateway } from '@users/infra/gateway/token/token.gateway.interface';
 import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.gateway.interface';
 
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
+import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
+
 describe('Unit tests for RecoverPassword use case', () => {
   let databaseGateway: IDatabaseGateway;
 
-  let authGateway: IAuthGateway;
+  let authGateway: ITokenGateway;
 
   let recoverPasswordUseCase: RecoverPasswordUseCase;
-
-  let spyGenerateRecoverPasswordToken: jest.SpyInstance;
 
   beforeEach(() => {
     databaseGateway = {
@@ -22,14 +22,9 @@ describe('Unit tests for RecoverPassword use case', () => {
     };
 
     authGateway = {
-      generateRecoverPasswordToken: jest.fn(),
-      verify: jest.fn(),
+      validate: jest.fn(),
+      generate: jest.fn(),
     };
-
-    spyGenerateRecoverPasswordToken = jest.spyOn(
-      authGateway,
-      'generateRecoverPasswordToken',
-    );
 
     recoverPasswordUseCase = new RecoverPasswordUseCase(
       databaseGateway,
@@ -37,15 +32,23 @@ describe('Unit tests for RecoverPassword use case', () => {
     );
   });
 
+  it('should generate a token to recover password', async () => {
+    jest
+      .mocked(databaseGateway.findByEmail)
+      .mockResolvedValue(RANDOM_USER_MOCK());
+
+    await recoverPasswordUseCase.execute({ email: 'any_email' });
+
+    expect(authGateway.generate).toHaveBeenCalledTimes(1);
+  });
+
   it('should throw an error if user not found', async () => {
     jest.mocked(databaseGateway.findByEmail).mockResolvedValue(null);
-
-    spyGenerateRecoverPasswordToken.mockReset();
 
     await expect(
       recoverPasswordUseCase.execute({ email: 'invalid_email@email.com' }),
     ).rejects.toThrowError('Email not registered');
 
-    expect(spyGenerateRecoverPasswordToken).not.toHaveBeenCalled();
+    expect(authGateway.generate).not.toHaveBeenCalled();
   });
 });

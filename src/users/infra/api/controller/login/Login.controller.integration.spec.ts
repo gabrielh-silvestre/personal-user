@@ -1,14 +1,16 @@
 import { Test } from '@nestjs/testing';
+import { JwtModule } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 
-import { VerifyCredentialsController } from './VerifyCredentials.controller';
-import { VerifyCredentialsUseCase } from '@users/useCase/verifyCredentials/VerifyCredentials.useCase';
+import { LoginController } from './Login.controller';
+import { LoginUseCase } from '@users/useCase/login/Login.useCase';
 
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
+import { TokenGateway } from '@users/infra/gateway/token/Token.gateway';
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { DATABASE_GATEWAY } from '@users/utils/constants';
+import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
 
 const [USER] = USERS_MOCK;
 const { email } = USER;
@@ -16,16 +18,21 @@ const { email } = USER;
 describe('Integration tests for Verify Credentials controller', () => {
   const client = new PrismaClient();
 
-  let verifyCredentialsController: VerifyCredentialsController;
+  let loginController: LoginController;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      controllers: [VerifyCredentialsController],
+      imports: [JwtModule.register({ secret: 'secret' })],
+      controllers: [LoginController],
       providers: [
-        VerifyCredentialsUseCase,
+        LoginUseCase,
         {
           provide: DATABASE_GATEWAY,
           useValue: new DatabaseGateway(client),
+        },
+        {
+          provide: TOKEN_GATEWAY,
+          useClass: TokenGateway,
         },
         {
           provide: RmqService,
@@ -37,12 +44,10 @@ describe('Integration tests for Verify Credentials controller', () => {
       ],
     }).compile();
 
-    verifyCredentialsController = module.get<VerifyCredentialsController>(
-      VerifyCredentialsController,
-    );
+    loginController = module.get<LoginController>(LoginController);
   });
 
-  describe('should verify credentials', () => {
+  describe('should login credentials', () => {
     beforeEach(async () => {
       await client.user.create({
         data: {
@@ -56,16 +61,19 @@ describe('Integration tests for Verify Credentials controller', () => {
       await client.user.deleteMany({});
     });
 
-    it('with RMQ message', async () => {
-      const response = await verifyCredentialsController.handleRmq(
-        {
-          email,
-          password: 'password',
-        },
-        {} as any,
-      );
+    it('with REST (POST) request', async () => {
+      const response = await loginController.handleRestPost({
+        email,
+        password: 'password',
+      });
 
-      expect(response).toStrictEqual({ id: expect.any(String) });
+      expect(response).toStrictEqual({
+        token: expect.any(String),
+        user: {
+          id: expect.any(String),
+          email: expect.any(String),
+        },
+      });
     });
   });
 });

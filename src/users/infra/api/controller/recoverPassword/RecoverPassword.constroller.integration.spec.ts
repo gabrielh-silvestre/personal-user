@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaClient } from '@prisma/client';
+
+import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 
 import { RecoverPasswordUseCase } from '@users/useCase/recoverPassword/RecoverPassword.useCase';
 import { RecoverPasswordController } from './RecoverPassword.controller';
@@ -15,19 +17,19 @@ const USER = RANDOM_USER_MOCK();
 const { email } = USER;
 
 describe('Integration tests for RecoverPassword controller', () => {
-  const client = new PrismaClient();
+  let client: PrismaService;
 
   let recoverPasswordController: RecoverPasswordController;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [JwtModule.register({ secret: 'secret' })],
+      imports: [PrismaModule, JwtModule.register({ secret: 'secret' })],
       controllers: [RecoverPasswordController],
       providers: [
         RecoverPasswordUseCase,
         {
           provide: DATABASE_GATEWAY,
-          useValue: new DatabaseGateway(client),
+          useClass: DatabaseGateway,
         },
         {
           provide: TOKEN_GATEWAY,
@@ -36,6 +38,7 @@ describe('Integration tests for RecoverPassword controller', () => {
       ],
     }).compile();
 
+    client = module.get<PrismaService>(PrismaService);
     recoverPasswordController = module.get(RecoverPasswordController);
   });
 

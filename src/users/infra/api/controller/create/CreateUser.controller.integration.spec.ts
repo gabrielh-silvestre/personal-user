@@ -1,5 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
+
+import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 
 import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
@@ -17,22 +19,24 @@ const VALID_NEW_USER = {
 };
 
 describe('Integration test for Create User controller', () => {
-  const client = new PrismaClient();
+  let client: PrismaService;
 
   let userController: CreateUserController;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [PrismaModule],
       controllers: [CreateUserController],
       providers: [
         CreateUserUseCase,
         {
           provide: DATABASE_GATEWAY,
-          useValue: new DatabaseGateway(client),
+          useClass: DatabaseGateway,
         },
       ],
     }).compile();
 
+    client = module.get<PrismaService>(PrismaService);
     userController = module.get<CreateUserController>(CreateUserController);
   });
 

@@ -1,23 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-
 import type { IDatabaseGateway } from './Database.gateway.interface';
 
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 import { DatabaseGateway } from './Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration test infra DatabaseGateway', () => {
-  const client = new PrismaClient();
+  const client = new PrismaService();
   let databaseGateway: IDatabaseGateway;
 
   beforeAll(async () => {
-    await client.$connect();
     await client.user.deleteMany({});
-  });
-
-  afterAll(async () => {
-    await client.user.deleteMany({});
-    await client.$disconnect();
   });
 
   beforeEach(() => {

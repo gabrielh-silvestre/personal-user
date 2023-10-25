@@ -15,7 +15,8 @@ export class RecoverPasswordUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
     private readonly databaseGateway: IDatabaseGateway,
-    @Inject(TOKEN_GATEWAY) private readonly authGateway: ITokenGateway,
+    @Inject(TOKEN_GATEWAY)
+    private readonly authGateway: ITokenGateway,
   ) {}
 
   private async foundUserByEmail(email: string): Promise<IUser | never> {

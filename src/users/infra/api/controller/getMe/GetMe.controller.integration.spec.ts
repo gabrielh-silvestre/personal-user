@@ -1,8 +1,10 @@
 import type { Request } from 'express';
 
 import { Test } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
-import { from } from 'rxjs';
+import { JwtModule } from '@nestjs/jwt';
+
+import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 
 import { GetMeController } from './GetMe.controller';
 
@@ -12,39 +14,34 @@ import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway'
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
 import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+import { TokenGateway } from '@users/infra/gateway/token/Token.gateway';
 
 const USER = RANDOM_USER_MOCK();
 const { id: userId } = USER;
 
 describe('Integration tests for Get Me controller', () => {
-  const client = new PrismaClient();
+  let client: PrismaService;
 
   let userController: GetMeController;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [PrismaModule, JwtModule.register({ secret: 'secret' })],
       controllers: [GetMeController],
       providers: [
         GetMeUseCase,
         {
           provide: DATABASE_GATEWAY,
-          useValue: new DatabaseGateway(client),
+          useClass: DatabaseGateway,
         },
         {
           provide: TOKEN_GATEWAY,
-          useValue: {
-            verify: jest.fn().mockResolvedValue(from([{ userId }])),
-          },
-        },
-        {
-          provide: 'TOKEN_SERVICE',
-          useValue: {
-            verifyToken: jest.fn().mockResolvedValue({ userId }),
-          },
+          useClass: TokenGateway,
         },
       ],
     }).compile();
 
+    client = module.get<PrismaService>(PrismaService);
     userController = module.get<GetMeController>(GetMeController);
   });
 

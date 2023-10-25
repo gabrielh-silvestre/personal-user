@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import type {
   IDatabaseGateway,
   OrmUserDto,
@@ -6,10 +8,11 @@ import type {
 import { User } from '@users/domain/entity/User';
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 
+@Injectable()
 export class DatabaseGateway implements IDatabaseGateway {
-  constructor(private readonly client: PrismaClient = new PrismaClient()) {}
+  constructor(private readonly client: PrismaService) {}
 
   private convertToOrm(user: User): OrmUserDto {
     return {

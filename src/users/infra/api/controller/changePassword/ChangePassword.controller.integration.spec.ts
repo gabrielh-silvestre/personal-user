@@ -1,14 +1,19 @@
 import type { Request } from 'express';
-import { Test } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
 
+import { Test } from '@nestjs/testing';
+import { JwtModule } from '@nestjs/jwt';
+
+import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
+
+import { TokenGateway } from '@users/infra/gateway/token/Token.gateway';
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 
 import { ChangePasswordUseCase } from '@users/useCase/changePassword/ChangePassword.useCase';
 import { ChangePasswordController } from './ChangePassword.controller';
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
-import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
+import { DATABASE_GATEWAY, TOKEN_GATEWAY } from '@users/utils/constants';
 
 const USER = RANDOM_USER_MOCK();
 const { id, password: oldPassword } = USER;
@@ -18,28 +23,28 @@ const VALID_PASSWORD_CHANGE = {
 };
 
 describe('Integration test for ChangePassword controller', () => {
-  const client = new PrismaClient();
+  let client: PrismaService;
 
   let changePasswordController: ChangePasswordController;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [PrismaModule, JwtModule.register({ secret: 'secret' })],
       controllers: [ChangePasswordController],
       providers: [
         ChangePasswordUseCase,
         {
           provide: DATABASE_GATEWAY,
-          useValue: new DatabaseGateway(client),
+          useClass: DatabaseGateway,
         },
         {
           provide: TOKEN_GATEWAY,
-          useValue: {
-            verify: jest.fn().mockResolvedValue({ userId: id }),
-          },
+          useClass: TokenGateway,
         },
       ],
     }).compile();
 
+    client = module.get<PrismaService>(PrismaService);
     changePasswordController = module.get<ChangePasswordController>(
       ChangePasswordController,
     );

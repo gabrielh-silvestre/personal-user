@@ -55,24 +55,6 @@ services:
     networks:
       - personal-network
 
-  rabbitmq:
-    image: rabbitmq:3.9-management-alpine
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      - AMQP_URL=amqp://rabbitmq?connection_attempts=5&retry_delay=5
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    healthcheck:
-      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-    networks:
-      - personal-network
-
 networks:
   personal-network:
     name: personal-network

@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
 import { PrismaService } from '@shared/modules/prisma/Prisma.service';
@@ -23,7 +24,11 @@ describe('Integration tests for RecoverPassword controller', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [PrismaModule, JwtModule.register({ secret: 'secret' })],
+      imports: [
+        PrismaModule,
+        EventEmitterModule.forRoot({ global: false }),
+        JwtModule.register({ secret: 'secret' }),
+      ],
       controllers: [RecoverPasswordController],
       providers: [
         RecoverPasswordUseCase,

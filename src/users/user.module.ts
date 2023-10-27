@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { RmqModule } from '@shared/modules/rmq/rmq.module';
+import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
 import { AwsModule } from '@shared/modules/aws/Aws.module';
+import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
@@ -41,8 +42,9 @@ import { TOKEN_SECRET, TOKEN_EXP } from '@shared/utils/constants';
 
 @Module({
   imports: [
-    RmqModule.register(AUTH_QUEUE),
+    PrismaModule,
     AwsModule,
+    RmqModule.register(AUTH_QUEUE),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

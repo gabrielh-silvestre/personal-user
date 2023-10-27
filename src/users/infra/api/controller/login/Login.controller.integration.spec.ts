@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaClient } from '@prisma/client';
+
+import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@users/useCase/login/Login.useCase';
@@ -16,19 +18,19 @@ const [USER] = USERS_MOCK;
 const { email } = USER;
 
 describe('Integration tests for Verify Credentials controller', () => {
-  const client = new PrismaClient();
+  let client: PrismaService;
 
   let loginController: LoginController;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [JwtModule.register({ secret: 'secret' })],
+      imports: [PrismaModule, JwtModule.register({ secret: 'secret' })],
       controllers: [LoginController],
       providers: [
         LoginUseCase,
         {
           provide: DATABASE_GATEWAY,
-          useValue: new DatabaseGateway(client),
+          useClass: DatabaseGateway,
         },
         {
           provide: TOKEN_GATEWAY,
@@ -44,6 +46,7 @@ describe('Integration tests for Verify Credentials controller', () => {
       ],
     }).compile();
 
+    client = module.get<PrismaService>(PrismaService);
     loginController = module.get<LoginController>(LoginController);
   });
 

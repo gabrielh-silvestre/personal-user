@@ -4,7 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { PrismaModule } from '@shared/modules/prisma/Prisma.module';
 import { AwsModule } from '@shared/modules/aws/Aws.module';
-import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 
@@ -29,14 +28,12 @@ import { ChangeAvatarUseCase } from './useCase/changeAvatar/ChangeAvatar.useCase
 import { TokenGateway } from './infra/gateway/token/Token.gateway';
 import { BucketGateway } from './infra/gateway/bucket/Bucket.gateway';
 
-import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
+import { MailEventHandler } from './infra/event/MailEvent.handler';
 
 import {
   TOKEN_GATEWAY,
-  AUTH_QUEUE,
   BUCKET_GATEWAY,
   DATABASE_GATEWAY,
-  QUEUE_ADAPTER,
 } from './utils/constants';
 import { TOKEN_SECRET, TOKEN_EXP } from '@shared/utils/constants';
 
@@ -44,7 +41,6 @@ import { TOKEN_SECRET, TOKEN_EXP } from '@shared/utils/constants';
   imports: [
     PrismaModule,
     AwsModule,
-    RmqModule.register(AUTH_QUEUE),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -74,6 +70,7 @@ import { TOKEN_SECRET, TOKEN_EXP } from '@shared/utils/constants';
     RecoverPasswordUseCase,
     ChangePasswordUseCase,
     ChangeAvatarUseCase,
+    MailEventHandler,
     {
       provide: TOKEN_GATEWAY,
       useClass: TokenGateway,
@@ -81,10 +78,6 @@ import { TOKEN_SECRET, TOKEN_EXP } from '@shared/utils/constants';
     {
       provide: DATABASE_GATEWAY,
       useClass: DatabaseGateway,
-    },
-    {
-      provide: QUEUE_ADAPTER,
-      useClass: QueueRmqAdapter,
     },
     {
       provide: BUCKET_GATEWAY,

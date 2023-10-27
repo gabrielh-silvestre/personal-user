@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import * as Joi from 'joi';
 
 import { UserModule } from './users/user.module';
@@ -23,15 +24,13 @@ import { UserModule } from './users/user.module';
 
         S3_BUCKET: Joi.string().required(),
 
-        RABBITMQ_PORT: Joi.number().required(),
-        RABBITMQ_MANAGEMENT_PORT: Joi.number().required(),
-        RABBITMQ_HOST: Joi.string().required(),
-        RABBITMQ_USER: Joi.string().required(),
-        RABBITMQ_PASS: Joi.string().required(),
-        RABBITMQ_URL: Joi.string().required(),
-
         DATABASE_URL: Joi.string().required(),
       }),
+    }),
+    EventEmitterModule.forRoot({
+      wildcard: false,
+      delimiter: '.',
+      global: true,
     }),
     UserModule,
   ],

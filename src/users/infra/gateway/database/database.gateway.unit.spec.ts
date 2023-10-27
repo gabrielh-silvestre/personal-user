@@ -2,25 +2,26 @@ import type { IDatabaseGateway } from './Database.gateway.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
+import { PrismaService } from '@shared/modules/prisma/Prisma.service';
 import { DatabaseGateway } from './Database.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { PrismaClient } from '@prisma/client';
 
 describe('Unit test infra DatabaseGateway', () => {
-  let mockClient: PrismaClient;
+  let client: PrismaService;
   let databaseGateway: IDatabaseGateway;
 
   beforeEach(() => {
-    mockClient = {
+    client = {
+      onModuleInit: jest.fn(),
       user: {
         findFirst: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
       },
-    } as any;
+    } as unknown as PrismaService;
 
-    databaseGateway = new DatabaseGateway(mockClient);
+    databaseGateway = new DatabaseGateway(client);
   });
 
   it.each([
@@ -31,7 +32,7 @@ describe('Unit test infra DatabaseGateway', () => {
 
     await databaseGateway[method](userToFind[field]);
 
-    expect(mockClient.user.findFirst).toHaveBeenCalledWith({
+    expect(client.user.findFirst).toHaveBeenCalledWith({
       where: { [field]: userToFind[field] },
     });
   });
@@ -42,7 +43,7 @@ describe('Unit test infra DatabaseGateway', () => {
     const response = await databaseGateway.existsByEmail(userToFind.email);
 
     expect(typeof response).toBe('boolean');
-    expect(mockClient.user.findFirst).toHaveBeenCalledWith({
+    expect(client.user.findFirst).toHaveBeenCalledWith({
       where: { email: userToFind.email },
     });
   });
@@ -52,7 +53,7 @@ describe('Unit test infra DatabaseGateway', () => {
 
     await databaseGateway.create(newUser);
 
-    expect(mockClient.user.create).toHaveBeenCalledWith({
+    expect(client.user.create).toHaveBeenCalledWith({
       data: {
         id: newUser.id,
         username: newUser.username,
@@ -71,7 +72,7 @@ describe('Unit test infra DatabaseGateway', () => {
 
     await databaseGateway.update(userToUpdate);
 
-    expect(mockClient.user.update).toHaveBeenCalledWith({
+    expect(client.user.update).toHaveBeenCalledWith({
       where: { id: userToUpdate.id },
       data: {
         username: userToUpdate.username,

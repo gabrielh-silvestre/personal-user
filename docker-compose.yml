@@ -16,6 +16,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      localstack:
+        condition: service_started
     environment:
       - PORT=${PORT}
       - GRPC_URL=backend:50052
@@ -28,6 +30,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
       - S3_BUCKET=${S3_BUCKET}
+      - SQS_ENDPOINT=http://localstack:4566
 
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:${RABBITMQ_PORT}
@@ -52,6 +55,26 @@ services:
       start_period: 30s
     cap_add:
       - SYS_NICE # Deve omitir alertas menores
+    networks:
+      - personal-network
+
+  localstack:
+    image: localstack/localstack
+    mem_limit: 512m
+    ports:
+      - 4566:4566
+    networks:
+      - personal-network
+
+  terraform:
+    image: hashicorp/terraform:light
+    volumes:
+      - .:/app
+    working_dir: /app/iac/terraform
+    entrypoint: ['/bin/sh', '-c']
+    command: ['terraform init && terraform apply -auto-approve']
+    depends_on:
+      - localstack
     networks:
       - personal-network
 

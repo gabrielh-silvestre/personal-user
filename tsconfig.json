@@ -20,6 +20,7 @@
     "paths": {
       "@users/*": ["src/users/*"],
       "@shared/*": ["src/shared/*"],
+      "@shared/events/*": ["src/shared/domain/event/*"],
       "@exceptions/*": ["./src/shared/modules/exceptions/*"]
     }
   }

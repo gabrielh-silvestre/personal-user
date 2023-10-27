@@ -4,11 +4,14 @@ import type { IDatabaseGateway } from '@users/infra/gateway/database/Database.ga
 import { RecoverPasswordUseCase } from './RecoverPassword.useCase';
 
 import { RANDOM_USER_MOCK } from '@shared/utils/mocks/users.mock';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('Unit tests for RecoverPassword use case', () => {
   let databaseGateway: IDatabaseGateway;
 
   let authGateway: ITokenGateway;
+
+  let emitter: EventEmitter2;
 
   let recoverPasswordUseCase: RecoverPasswordUseCase;
 
@@ -26,9 +29,14 @@ describe('Unit tests for RecoverPassword use case', () => {
       generate: jest.fn(),
     };
 
+    emitter = {
+      emitAsync: jest.fn(),
+    } as any;
+
     recoverPasswordUseCase = new RecoverPasswordUseCase(
       databaseGateway,
       authGateway,
+      emitter,
     );
   });
 
@@ -40,6 +48,7 @@ describe('Unit tests for RecoverPassword use case', () => {
     await recoverPasswordUseCase.execute({ email: 'any_email' });
 
     expect(authGateway.generate).toHaveBeenCalledTimes(1);
+    expect(emitter.emitAsync).toHaveBeenCalledTimes(1);
   });
 
   it('should throw an error if user not found', async () => {
@@ -50,5 +59,6 @@ describe('Unit tests for RecoverPassword use case', () => {
     ).rejects.toThrowError('Email not registered');
 
     expect(authGateway.generate).not.toHaveBeenCalled();
+    expect(emitter.emitAsync).not.toHaveBeenCalled();
   });
 });

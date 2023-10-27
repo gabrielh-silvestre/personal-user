@@ -27,10 +27,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.433.0",
+    "@coaktion/aws": "^1.0.6",
     "@grpc/grpc-js": "^1.8.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/event-emitter": "^2.0.2",
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/microservices": "^9.2.1",
     "@nestjs/passport": "^10.0.2",

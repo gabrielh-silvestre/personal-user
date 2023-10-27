@@ -16,6 +16,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      localstack:
+        condition: service_started
     environment:
       - PORT=${PORT}
       - GRPC_URL=backend:50052
@@ -28,9 +30,9 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
       - S3_BUCKET=${S3_BUCKET}
+      - SQS_ENDPOINT=http://localstack:4566
 
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
-      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:${RABBITMQ_PORT}
     networks:
       - personal-network
 
@@ -55,21 +57,23 @@ services:
     networks:
       - personal-network
 
-  rabbitmq:
-    image: rabbitmq:3.9-management-alpine
+  localstack:
+    image: localstack/localstack
+    mem_limit: 512m
     ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      - AMQP_URL=amqp://rabbitmq?connection_attempts=5&retry_delay=5
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    healthcheck:
-      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
+      - 4566:4566
+    networks:
+      - personal-network
+
+  terraform:
+    image: hashicorp/terraform:light
+    volumes:
+      - .:/app
+    working_dir: /app/iac/terraform
+    entrypoint: ['/bin/sh', '-c']
+    command: ['terraform init && terraform apply -auto-approve']
+    depends_on:
+      - localstack
     networks:
       - personal-network
 

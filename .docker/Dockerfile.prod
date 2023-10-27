@@ -1,4 +1,4 @@
-FROM node:16-alpine AS installer
+FROM node:18-alpine AS installer
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY ../package.*json .
 RUN npm install
 
 
-FROM node:16-alpine AS builder
+FROM node:18-alpine AS builder
 
 RUN apk add openssl1.1-compat
 
@@ -20,7 +20,7 @@ RUN npx prisma generate
 RUN npm run build
 
 
-FROM node:16-alpine AS runner
+FROM node:18-alpine AS runner
 
 RUN apk add openssl1.1-compat
 
@@ -29,12 +29,19 @@ WORKDIR /app
 ENV PORT=${PORT}
 ENV GRPC_URL=${GRPC_URL}
 
-ENV RABBITMQ_URL=${RABBITMQ_URL}
 ENV DATABASE_URL=${DATABASE_URL}
 
-ENV RABBITMQ_MAIL_QUEUE=${RABBITMQ_MAIL_QUEUE}
-ENV RABBITMQ_USER_QUEUE=${RABBITMQ_USER_QUEUE}
-ENV RABBITMQ_AUTH_QUEUE=${RABBITMQ_AUTH_QUEUE}
+ENV JWT_SECRET=${JWT_SECRET}
+
+ENV AWS_REGION=${AWS_REGION}
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+ENV S3_BUCKET=${S3_BUCKET}
+
+ENV SQS_ENDPOINT=${SQS_ENDPOINT}
+ENV SQS_TOPIC_ARN_MAIL=${SQS_TOPIC_ARN_MAIL}
+ENV SQS_GROUP_TOPIC_ARN_MAIL=${SQS_GROUP_TOPIC_ARN_MAIL}
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules

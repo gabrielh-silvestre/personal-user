@@ -6,6 +6,7 @@ import {
   AWS_ACCESS_KEY_ID,
   AWS_REGION,
   AWS_SECRET_ACCESS_KEY,
+  SQS_ENDPOINT,
 } from '@shared/utils/constants';
 
 @Injectable()
@@ -19,6 +20,18 @@ export class SNSService extends SNSHandler {
           AWS_SECRET_ACCESS_KEY,
         ),
       },
+      endpoint: configService.getOrThrow(SQS_ENDPOINT),
+    });
+
+    console.log({
+      region: configService.getOrThrow<string>(AWS_REGION),
+      credentials: {
+        accessKeyId: configService.getOrThrow<string>(AWS_ACCESS_KEY_ID),
+        secretAccessKey: configService.getOrThrow<string>(
+          AWS_SECRET_ACCESS_KEY,
+        ),
+      },
+      endpoint: configService.getOrThrow(SQS_ENDPOINT),
     });
   }
 }

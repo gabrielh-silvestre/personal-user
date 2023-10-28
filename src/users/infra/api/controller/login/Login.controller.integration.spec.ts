@@ -44,12 +44,14 @@ describe('Integration tests for Verify Credentials controller', () => {
 
   describe('should login credentials', () => {
     beforeEach(async () => {
-      await client.user.create({
-        data: {
-          ...USER.toDto(),
-          password: USER.password.toString(),
-        },
-      });
+      await client.user
+        .create({
+          data: {
+            ...USER.toDto(),
+            password: USER.password.toString(),
+          },
+        })
+        .catch(() => null);
     });
 
     afterEach(async () => {

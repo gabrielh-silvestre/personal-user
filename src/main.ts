@@ -4,8 +4,6 @@ import { join } from 'path';
 
 import { AppModule } from './app.module';
 
-// import { RmqService } from '@shared/modules/rmq/rmq.service';
-
 import { GlobalExceptionRestFilter } from '@shared/infra/filter/GlobalException.filter';
 
 async function bootstrap() {
@@ -15,11 +13,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new GlobalExceptionRestFilter());
 
-  // const userRmqService = app.get<RmqService>(RmqService);
-
-  // app.connectMicroservice<MicroserviceOptions>(
-  //   userRmqService.getOptions('USER'),
-  // );
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {

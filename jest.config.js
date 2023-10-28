@@ -8,7 +8,7 @@ module.exports = {
   modulePathIgnorePatterns: ['<rootDir>/src/@types', '<rootDir>/src/main.ts'],
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
-  transform: { '^.+\\.(t|j)s$': 'ts-jest' },
+  transform: { '^.+\\.(t|j)s$': ['@swc/jest'] },
   collectCoverageFrom: ['src/users/**/*.(t|j)s'],
   coverageDirectory: './coverage',
   testEnvironment: 'node',

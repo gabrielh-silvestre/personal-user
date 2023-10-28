@@ -3,7 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+    "builder": "swc",
     "assets": ["**/*.proto", "**/*.ejs"],
+    "typeCheck": true,
     "watchAssets": true
   }
 }

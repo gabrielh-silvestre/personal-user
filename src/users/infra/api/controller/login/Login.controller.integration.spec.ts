@@ -9,7 +9,6 @@ import { LoginUseCase } from '@users/useCase/login/Login.useCase';
 
 import { DatabaseGateway } from '@users/infra/gateway/database/Database.gateway';
 import { TokenGateway } from '@users/infra/gateway/token/Token.gateway';
-import { RmqService } from '@shared/modules/rmq/rmq.service';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 import { TOKEN_GATEWAY, DATABASE_GATEWAY } from '@users/utils/constants';
@@ -36,13 +35,6 @@ describe('Integration tests for Verify Credentials controller', () => {
           provide: TOKEN_GATEWAY,
           useClass: TokenGateway,
         },
-        {
-          provide: RmqService,
-          useValue: {
-            ack: jest.fn(),
-            nack: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -52,12 +44,14 @@ describe('Integration tests for Verify Credentials controller', () => {
 
   describe('should login credentials', () => {
     beforeEach(async () => {
-      await client.user.create({
-        data: {
-          ...USER.toDto(),
-          password: USER.password.toString(),
-        },
-      });
+      await client.user
+        .create({
+          data: {
+            ...USER.toDto(),
+            password: USER.password.toString(),
+          },
+        })
+        .catch(() => null);
     });
 
     afterEach(async () => {

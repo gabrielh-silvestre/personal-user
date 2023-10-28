@@ -52,12 +52,14 @@ describe('Integration test for ChangePassword controller', () => {
 
   describe('should change password', () => {
     beforeEach(async () => {
-      await client.user.create({
-        data: {
-          ...USER.toDto(),
-          password: USER.password.toString(),
-        },
-      });
+      await client.user
+        .create({
+          data: {
+            ...USER.toDto(),
+            password: USER.password.toString(),
+          },
+        })
+        .catch(() => null);
     });
 
     afterEach(async () => {
@@ -74,7 +76,7 @@ describe('Integration test for ChangePassword controller', () => {
         where: { id },
       });
 
-      expect(newPassword).not.toEqual(oldPassword);
+      expect(newPassword).not.toEqual(oldPassword.toString());
     });
 
     it('with gRPC request', async () => {
@@ -83,11 +85,11 @@ describe('Integration test for ChangePassword controller', () => {
         VALID_PASSWORD_CHANGE,
       );
 
-      const { password: newPassword } = await client.user.findUnique({
+      const updatedUser = await client.user.findUnique({
         where: { id },
       });
 
-      expect(newPassword).not.toEqual(oldPassword);
+      expect(updatedUser?.password).not.toEqual(oldPassword.toString());
     });
   });
 });
